@@ -1,0 +1,720 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03AB0380691817407CB7DD2D /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256FDB40B3B77E72C4B5E1AF /* GameState.swift */; };
+		076B08EDBF50334A40F40DA6 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2F0B53D6A9B8A116B0F999 /* Food.swift */; };
+		08249C1C86681BFD82868F90 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DEC2231942E134DB03319D /* GameViewModel.swift */; };
+		17B8C7E9C471B420F390CAD7 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24790CC4365BFFC4BCD6EB5 /* Position.swift */; };
+		338F8D53977F2CDBC30E4982 /* GreedyBlackCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */; };
+		34EE7B903BC2D7CB05ABB003 /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E85641C6D3F53D7E30431 /* TouchControls.swift */; };
+		368BCCC8686BE9750F44693E /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2F0B53D6A9B8A116B0F999 /* Food.swift */; };
+		39E688F5C01B6384DEFC2403 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DEC2231942E134DB03319D /* GameViewModel.swift */; };
+		3EDD38D1D3489691336D22D7 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF8E4569AE0F39435F85FE5 /* GameView.swift */; };
+		470EAC650F91FB86087F6B86 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06169E0B76B6724D9A497F2E /* Cat.swift */; };
+		5415C8271BC8EAA01C018B88 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06169E0B76B6724D9A497F2E /* Cat.swift */; };
+		5A85BA01AF59213C81090CE9 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
+		688D31EC69E34DEF56874662 /* KeyboardControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38662805A9C16C22E03A08B /* KeyboardControls.swift */; };
+		6C1A3E021E4E46B79A357FBA /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0E5E3B8830D5EA209282D1 /* FoodView.swift */; };
+		73FD730D3B881BF6A5722CAE /* CatSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */; };
+		798C8680B0EC67A2440AAF88 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7DB2355FF857815500500E /* Direction.swift */; };
+		7A0C35E1207305233FB79780 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F99624369F973C8ABA6B614 /* GameOverView.swift */; };
+		9A66F70EDB50E6C681D95008 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7DB2355FF857815500500E /* Direction.swift */; };
+		B54F18EDCE748740DF3F8B20 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24790CC4365BFFC4BCD6EB5 /* Position.swift */; };
+		BA928630CA52E0297DE5B7D0 /* KeyboardControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38662805A9C16C22E03A08B /* KeyboardControls.swift */; };
+		D153D2B1BEC10BB2626C491A /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */; };
+		D26A4C01C24B2B9B3CD4BB63 /* AdaptiveSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */; };
+		D3077CF55BA323FE34A738B0 /* GreedyBlackCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */; };
+		D83161D0BBCD5FAC9B5E6CCC /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E85641C6D3F53D7E30431 /* TouchControls.swift */; };
+		DDC07698414003BD417AD68A /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF8E4569AE0F39435F85FE5 /* GameView.swift */; };
+		ED60A7847C0E904A71B82AF7 /* AdaptiveSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */; };
+		F1C1F7EB0D2680FCB1F62F70 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F99624369F973C8ABA6B614 /* GameOverView.swift */; };
+		F382C0CAFDC175EBF1DC992B /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256FDB40B3B77E72C4B5E1AF /* GameState.swift */; };
+		F488030A9F44EF79BDD74B92 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */; };
+		F52A4DD3D48566582AEA96BF /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
+		F59A6268D89C1FDABED49AB8 /* CatSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */; };
+		FAED9115CE11D5AD81893A04 /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0E5E3B8830D5EA209282D1 /* FoodView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3ECB9FE0F8FB81329BD8A341 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5339A9576CB21B10C9F03747 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 99390204EF93AA6EC4144DF6;
+			remoteInfo = "GreedyBlackCat iOS";
+		};
+		F0D268E5E5B12F5BAD2AD62B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5339A9576CB21B10C9F03747 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E90EAC23D3123199F5542A9;
+			remoteInfo = "GreedyBlackCat macOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06169E0B76B6724D9A497F2E /* Cat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cat.swift; sourceTree = "<group>"; };
+		0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
+		1B2E85641C6D3F53D7E30431 /* TouchControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchControls.swift; sourceTree = "<group>"; };
+		1F99624369F973C8ABA6B614 /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
+		256FDB40B3B77E72C4B5E1AF /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		4D2F0B53D6A9B8A116B0F999 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
+		4F7DB2355FF857815500500E /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		4FD445308D0F21357D657D9E /* GameSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettings.swift; sourceTree = "<group>"; };
+		50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSettings.swift; sourceTree = "<group>"; };
+		58DEC2231942E134DB03319D /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreedyBlackCatApp.swift; sourceTree = "<group>"; };
+		7D126A6464B29C76FA0F4411 /* GreedyBlackCatTests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GreedyBlackCatTests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		894B1972D447B36FD52C0EB6 /* GreedyBlackCatTests iOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "GreedyBlackCatTests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CF8E4569AE0F39435F85FE5 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatSegmentView.swift; sourceTree = "<group>"; };
+		A38662805A9C16C22E03A08B /* KeyboardControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardControls.swift; sourceTree = "<group>"; };
+		A83CB8F39AA18C5333D08A39 /* GreedyBlackCat iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "GreedyBlackCat iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B24790CC4365BFFC4BCD6EB5 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
+		DEADB90A368BC7F7CE1CDFD9 /* GreedyBlackCat macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GreedyBlackCat macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA0E5E3B8830D5EA209282D1 /* FoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0AEBDC4238B40AC46E554114 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				A38662805A9C16C22E03A08B /* KeyboardControls.swift */,
+				1B2E85641C6D3F53D7E30431 /* TouchControls.swift */,
+			);
+			path = Controls;
+			sourceTree = "<group>";
+		};
+		136B030C90FAB0AA17AD75E3 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				29D6FD628F9CA77F1F2E0F00 /* GreedyBlackCat */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		164C3A166EF4D7A04E234D09 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				58DEC2231942E134DB03319D /* GameViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		213281EE814DF9107473C957 /* GreedyBlackCatTests */ = {
+			isa = PBXGroup;
+			children = (
+				6F8DF5469D89D49D0A9883C6 /* GameEngine */,
+				4961A200AF34B71DD7F67011 /* Models */,
+				6ADF731D43EB4A54F3F4525E /* ViewModels */,
+			);
+			path = GreedyBlackCatTests;
+			sourceTree = "<group>";
+		};
+		29D6FD628F9CA77F1F2E0F00 /* GreedyBlackCat */ = {
+			isa = PBXGroup;
+			children = (
+				658DCA3E8C48E028DE8AD109 /* App */,
+				E10C6230B48E4B491CCBABC1 /* Components */,
+				0AEBDC4238B40AC46E554114 /* Controls */,
+				C2382984C44E63327F834D97 /* Models */,
+				164C3A166EF4D7A04E234D09 /* ViewModels */,
+				B5029866D571E539B622D3D4 /* Views */,
+			);
+			path = GreedyBlackCat;
+			sourceTree = "<group>";
+		};
+		4961A200AF34B71DD7F67011 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		658DCA3E8C48E028DE8AD109 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		6ADF731D43EB4A54F3F4525E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		6F8DF5469D89D49D0A9883C6 /* GameEngine */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = GameEngine;
+			sourceTree = "<group>";
+		};
+		A3FCF3959E13B8EDDA760751 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A83CB8F39AA18C5333D08A39 /* GreedyBlackCat iOS.app */,
+				DEADB90A368BC7F7CE1CDFD9 /* GreedyBlackCat macOS.app */,
+				894B1972D447B36FD52C0EB6 /* GreedyBlackCatTests iOS.xctest */,
+				7D126A6464B29C76FA0F4411 /* GreedyBlackCatTests macOS.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B5029866D571E539B622D3D4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1F99624369F973C8ABA6B614 /* GameOverView.swift */,
+				8CF8E4569AE0F39435F85FE5 /* GameView.swift */,
+				0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BB236A3E899DACE05BD31550 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				213281EE814DF9107473C957 /* GreedyBlackCatTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		C2382984C44E63327F834D97 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */,
+				06169E0B76B6724D9A497F2E /* Cat.swift */,
+				4F7DB2355FF857815500500E /* Direction.swift */,
+				4D2F0B53D6A9B8A116B0F999 /* Food.swift */,
+				4FD445308D0F21357D657D9E /* GameSettings.swift */,
+				256FDB40B3B77E72C4B5E1AF /* GameState.swift */,
+				B24790CC4365BFFC4BCD6EB5 /* Position.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DEBBC610DB1D5CED6497A4A6 = {
+			isa = PBXGroup;
+			children = (
+				136B030C90FAB0AA17AD75E3 /* Sources */,
+				BB236A3E899DACE05BD31550 /* Tests */,
+				A3FCF3959E13B8EDDA760751 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E10C6230B48E4B491CCBABC1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */,
+				FA0E5E3B8830D5EA209282D1 /* FoodView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1E90EAC23D3123199F5542A9 /* GreedyBlackCat macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D2A24FFAC54EF0FD949613B /* Build configuration list for PBXNativeTarget "GreedyBlackCat macOS" */;
+			buildPhases = (
+				D4FBD1D300A26D711594083C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GreedyBlackCat macOS";
+			packageProductDependencies = (
+			);
+			productName = "GreedyBlackCat macOS";
+			productReference = DEADB90A368BC7F7CE1CDFD9 /* GreedyBlackCat macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5857FBF4DA3D85CA19F1E996 /* GreedyBlackCatTests iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C02A8E3B238721910DFA6D6F /* Build configuration list for PBXNativeTarget "GreedyBlackCatTests iOS" */;
+			buildPhases = (
+				B346AF97B7579E84E50D8F2F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				03068AA60A8DC8BF523C1413 /* PBXTargetDependency */,
+			);
+			name = "GreedyBlackCatTests iOS";
+			packageProductDependencies = (
+			);
+			productName = "GreedyBlackCatTests iOS";
+			productReference = 894B1972D447B36FD52C0EB6 /* GreedyBlackCatTests iOS.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		99390204EF93AA6EC4144DF6 /* GreedyBlackCat iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 87C8571EA502C4FB88CACAC7 /* Build configuration list for PBXNativeTarget "GreedyBlackCat iOS" */;
+			buildPhases = (
+				69D136F229E93BBF237B0925 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GreedyBlackCat iOS";
+			packageProductDependencies = (
+			);
+			productName = "GreedyBlackCat iOS";
+			productReference = A83CB8F39AA18C5333D08A39 /* GreedyBlackCat iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		ED7B964CCAABE3A53B04B213 /* GreedyBlackCatTests macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D07CC2300D25A2CEE93F4861 /* Build configuration list for PBXNativeTarget "GreedyBlackCatTests macOS" */;
+			buildPhases = (
+				8F22CB4D8589554425A3A9A9 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				16154DA604A5EE246FF108BA /* PBXTargetDependency */,
+			);
+			name = "GreedyBlackCatTests macOS";
+			packageProductDependencies = (
+			);
+			productName = "GreedyBlackCatTests macOS";
+			productReference = 7D126A6464B29C76FA0F4411 /* GreedyBlackCatTests macOS.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5339A9576CB21B10C9F03747 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = 6833EA3B1C0B22138C517D12 /* Build configuration list for PBXProject "GreedyBlackCat" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = "zh-Hans";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = DEBBC610DB1D5CED6497A4A6;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				99390204EF93AA6EC4144DF6 /* GreedyBlackCat iOS */,
+				1E90EAC23D3123199F5542A9 /* GreedyBlackCat macOS */,
+				5857FBF4DA3D85CA19F1E996 /* GreedyBlackCatTests iOS */,
+				ED7B964CCAABE3A53B04B213 /* GreedyBlackCatTests macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		69D136F229E93BBF237B0925 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D26A4C01C24B2B9B3CD4BB63 /* AdaptiveSettings.swift in Sources */,
+				470EAC650F91FB86087F6B86 /* Cat.swift in Sources */,
+				73FD730D3B881BF6A5722CAE /* CatSegmentView.swift in Sources */,
+				798C8680B0EC67A2440AAF88 /* Direction.swift in Sources */,
+				076B08EDBF50334A40F40DA6 /* Food.swift in Sources */,
+				FAED9115CE11D5AD81893A04 /* FoodView.swift in Sources */,
+				7A0C35E1207305233FB79780 /* GameOverView.swift in Sources */,
+				5A85BA01AF59213C81090CE9 /* GameSettings.swift in Sources */,
+				03AB0380691817407CB7DD2D /* GameState.swift in Sources */,
+				DDC07698414003BD417AD68A /* GameView.swift in Sources */,
+				08249C1C86681BFD82868F90 /* GameViewModel.swift in Sources */,
+				338F8D53977F2CDBC30E4982 /* GreedyBlackCatApp.swift in Sources */,
+				BA928630CA52E0297DE5B7D0 /* KeyboardControls.swift in Sources */,
+				D153D2B1BEC10BB2626C491A /* MainMenuView.swift in Sources */,
+				B54F18EDCE748740DF3F8B20 /* Position.swift in Sources */,
+				34EE7B903BC2D7CB05ABB003 /* TouchControls.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F22CB4D8589554425A3A9A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B346AF97B7579E84E50D8F2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4FBD1D300A26D711594083C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED60A7847C0E904A71B82AF7 /* AdaptiveSettings.swift in Sources */,
+				5415C8271BC8EAA01C018B88 /* Cat.swift in Sources */,
+				F59A6268D89C1FDABED49AB8 /* CatSegmentView.swift in Sources */,
+				9A66F70EDB50E6C681D95008 /* Direction.swift in Sources */,
+				368BCCC8686BE9750F44693E /* Food.swift in Sources */,
+				6C1A3E021E4E46B79A357FBA /* FoodView.swift in Sources */,
+				F1C1F7EB0D2680FCB1F62F70 /* GameOverView.swift in Sources */,
+				F52A4DD3D48566582AEA96BF /* GameSettings.swift in Sources */,
+				F382C0CAFDC175EBF1DC992B /* GameState.swift in Sources */,
+				3EDD38D1D3489691336D22D7 /* GameView.swift in Sources */,
+				39E688F5C01B6384DEFC2403 /* GameViewModel.swift in Sources */,
+				D3077CF55BA323FE34A738B0 /* GreedyBlackCatApp.swift in Sources */,
+				688D31EC69E34DEF56874662 /* KeyboardControls.swift in Sources */,
+				F488030A9F44EF79BDD74B92 /* MainMenuView.swift in Sources */,
+				17B8C7E9C471B420F390CAD7 /* Position.swift in Sources */,
+				D83161D0BBCD5FAC9B5E6CCC /* TouchControls.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		03068AA60A8DC8BF523C1413 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 99390204EF93AA6EC4144DF6 /* GreedyBlackCat iOS */;
+			targetProxy = 3ECB9FE0F8FB81329BD8A341 /* PBXContainerItemProxy */;
+		};
+		16154DA604A5EE246FF108BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1E90EAC23D3123199F5542A9 /* GreedyBlackCat macOS */;
+			targetProxy = F0D268E5E5B12F5BAD2AD62B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		07DBD0F3553F84044943E517 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.tests.macos;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreedyBlackCat macOS.app/Contents/MacOS/GreedyBlackCat macOS";
+			};
+			name = Release;
+		};
+		4E4B850F412E303B83F7C8CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/GreedyBlackCat/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.game.macos;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		60E99B29824987A08CB943D2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = GreedyBlackCat;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		86B08C6B8D0ADA15FCE99386 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = GreedyBlackCat;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		8FB1C7DC700B94CAD3E9752A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/GreedyBlackCat/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.game.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C3FA4E8EE42520E3BFFDF064 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/GreedyBlackCat/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.game.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D2B1F75C4ACF853A8D58F210 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.tests.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreedyBlackCat iOS.app/GreedyBlackCat iOS";
+			};
+			name = Debug;
+		};
+		D9E89D0A7C2D176D32F281AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.tests.macos;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreedyBlackCat macOS.app/Contents/MacOS/GreedyBlackCat macOS";
+			};
+			name = Debug;
+		};
+		DF32D7C6B6CEC6CC963C81AA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.tests.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GreedyBlackCat iOS.app/GreedyBlackCat iOS";
+			};
+			name = Release;
+		};
+		F274BA769814A1C826E2C057 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/GreedyBlackCat/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedyblackcat.game.macos;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3D2A24FFAC54EF0FD949613B /* Build configuration list for PBXNativeTarget "GreedyBlackCat macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F274BA769814A1C826E2C057 /* Debug */,
+				4E4B850F412E303B83F7C8CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6833EA3B1C0B22138C517D12 /* Build configuration list for PBXProject "GreedyBlackCat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60E99B29824987A08CB943D2 /* Debug */,
+				86B08C6B8D0ADA15FCE99386 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		87C8571EA502C4FB88CACAC7 /* Build configuration list for PBXNativeTarget "GreedyBlackCat iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FB1C7DC700B94CAD3E9752A /* Debug */,
+				C3FA4E8EE42520E3BFFDF064 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C02A8E3B238721910DFA6D6F /* Build configuration list for PBXNativeTarget "GreedyBlackCatTests iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2B1F75C4ACF853A8D58F210 /* Debug */,
+				DF32D7C6B6CEC6CC963C81AA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D07CC2300D25A2CEE93F4861 /* Build configuration list for PBXNativeTarget "GreedyBlackCatTests macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9E89D0A7C2D176D32F281AF /* Debug */,
+				07DBD0F3553F84044943E517 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5339A9576CB21B10C9F03747 /* Project object */;
+}

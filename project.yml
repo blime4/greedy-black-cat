@@ -1,0 +1,142 @@
+name: GreedyBlackCat
+options:
+  bundleIdPrefix: com.greedyblackcat
+  deploymentTarget:
+    iOS: "15.0"
+    macOS: "12.0"
+  developmentLanguage: zh-Hans
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    PRODUCT_NAME: GreedyBlackCat
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    ENABLE_PREVIEWS: true
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: true
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    MACOSX_DEPLOYMENT_TARGET: "12.0"
+
+targets:
+  GreedyBlackCat iOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: Sources/GreedyBlackCat
+        includes: ["**/*.swift"]
+    resources:
+      - path: Sources/GreedyBlackCat/Resources
+        includes: ["**/*"]
+    info:
+      path: Sources/GreedyBlackCat/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: 贪吃的黑猫
+        CFBundleName: GreedyBlackCat
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSHumanReadableCopyright: "© 2025 Greedy Black Cat"
+        LSApplicationCategoryType: public.app-category.games
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.greedyblackcat.game.ios
+        INFOPLIST_FILE: Sources/GreedyBlackCat/Resources/Info.plist
+        ENABLE_PREVIEWS: true
+        TARGETED_DEVICE_FAMILY: "1,2"
+
+  GreedyBlackCat macOS:
+    type: application
+    platform: macOS
+    deploymentTarget: "12.0"
+    sources:
+      - path: Sources/GreedyBlackCat
+        includes: ["**/*.swift"]
+    resources:
+      - path: Sources/GreedyBlackCat/Resources
+        includes: ["**/*"]
+    info:
+      path: Sources/GreedyBlackCat/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: 贪吃的黑猫
+        CFBundleName: GreedyBlackCat
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: "12.0"
+        NSHumanReadableCopyright: "© 2025 Greedy Black Cat"
+        NSPrincipalClass: NSApplication
+        LSApplicationCategoryType: public.app-category.games
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.greedyblackcat.game.macos
+        INFOPLIST_FILE: Sources/GreedyBlackCat/Resources/Info.plist
+        ENABLE_PREVIEWS: true
+
+  GreedyBlackCatTests iOS:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: Tests/GreedyBlackCatTests
+        includes: ["**/*.swift"]
+    dependencies:
+      - target: GreedyBlackCat iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.greedyblackcat.tests.ios
+
+  GreedyBlackCatTests macOS:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "12.0"
+    sources:
+      - path: Tests/GreedyBlackCatTests
+        includes: ["**/*.swift"]
+    dependencies:
+      - target: GreedyBlackCat macOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.greedyblackcat.tests.macos
+
+schemes:
+  GreedyBlackCat iOS:
+    build:
+      targets:
+        GreedyBlackCat iOS: all
+    run:
+      config: Debug
+      commandLineArguments:
+        ""
+    test:
+      config: Debug
+      targets:
+        - GreedyBlackCatTests iOS
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+  GreedyBlackCat macOS:
+    build:
+      targets:
+        GreedyBlackCat macOS: all
+    run:
+      config: Debug
+      commandLineArguments:
+        ""
+    test:
+      config: Debug
+      targets:
+        - GreedyBlackCatTests macOS
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
