@@ -26,22 +26,23 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Initialization
     init(settings: GameSettings? = nil) {
-        // Use adaptive settings if none provided
-        self.settings = settings ?? AdaptiveSettings.gameSettings()
-        self.currentSpeed = self.settings.tickInterval
+        // Compute all values in local variables first (no self access)
+        let theSettings = settings ?? AdaptiveSettings.gameSettings()
+        let theSpeed = theSettings.tickInterval
+        let startX = theSettings.gridWidth / 2
+        let startY = theSettings.gridHeight / 2
+        let theCat = Cat(startPosition: Position(x: startX, y: startY))
+        let theHighScore = Self.loadHighScore()
+        let gridW = theSettings.gridWidth
+        let gridH = theSettings.gridHeight
+        let theFood = Self.generateFood(for: theCat, gridWidth: gridW, gridHeight: gridH)
 
-        // Start cat in the middle of the grid
-        let startX = self.settings.gridWidth / 2
-        let startY = self.settings.gridHeight / 2
-        self.cat = Cat(startPosition: Position(x: startX, y: startY))
-
-        // Load high score
-        self.highScore = Self.loadHighScore()
-
-        // Generate initial food (use local variables to avoid self access)
-        let gridW = self.settings.gridWidth
-        let gridH = self.settings.gridHeight
-        self.food = Self.generateFood(for: cat, gridWidth: gridW, gridHeight: gridH)
+        // Now assign to all properties
+        self.settings = theSettings
+        self.currentSpeed = theSpeed
+        self.cat = theCat
+        self.highScore = theHighScore
+        self.food = theFood
     }
 
     // MARK: - Game Control
