@@ -7,7 +7,7 @@ struct TouchControls: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .gesture(
+            .simultaneousGesture(
                 DragGesture(minimumDistance: 30)
                     .onEnded { value in
                         let horizontalAmount = value.translation.width

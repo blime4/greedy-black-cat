@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct GameView: View {
-    @StateObject private var viewModel: GameViewModel
+    @ObservedObject var viewModel: GameViewModel
     @State private var showingPauseMenu = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     init(viewModel: GameViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
     }
 
     var body: some View {
@@ -54,11 +54,6 @@ struct GameView: View {
         #else
         .touchControls(viewModel: viewModel)
         #endif
-        .onAppear {
-            if viewModel.gameState == .menu {
-                viewModel.startGame()
-            }
-        }
     }
 
     // MARK: - HUD
@@ -260,7 +255,13 @@ struct GameView: View {
                 .padding(.horizontal, 40)
             }
             .padding(32)
-            .background(Color(NSColor.windowBackgroundColor))
+            .background(
+                #if os(macOS)
+                Color(NSColor.windowBackgroundColor)
+                #else
+                Color(.systemBackground)
+                #endif
+            )
             .cornerRadius(16)
             .padding(40)
         }

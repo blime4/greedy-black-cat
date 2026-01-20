@@ -56,7 +56,9 @@ struct MainMenuView: View {
 
                     // Start Button
                     Button(action: {
-                        gameViewModel = GameViewModel()
+                        let vm = GameViewModel()
+                        vm.startGame()
+                        gameViewModel = vm
                         showingGame = true
                     }) {
                         HStack {
@@ -133,19 +135,24 @@ struct GameContainerView: View {
 
     var body: some View {
         Group {
-            if viewModel.gameState.isPlaying || viewModel.gameState.isPaused {
-                GameView(viewModel: viewModel)
-            } else if viewModel.gameState.isGameOver {
-                GameOverView(
-                    score: viewModel.score,
-                    highScore: viewModel.highScore,
-                    onRestart: {
-                        viewModel.restartGame()
-                    },
-                    onMainMenu: {
-                        dismiss()
-                    }
-                )
+            if !viewModel.gameState.isMenu {
+                if viewModel.gameState.isPlaying || viewModel.gameState.isPaused {
+                    GameView(viewModel: viewModel)
+                } else if viewModel.gameState.isGameOver {
+                    GameOverView(
+                        score: viewModel.score,
+                        highScore: viewModel.highScore,
+                        onRestart: {
+                            viewModel.restartGame()
+                        },
+                        onMainMenu: {
+                            dismiss()
+                        }
+                    )
+                }
+            } else {
+                // Fallback loading view if state is still .menu
+                ProgressView("Loading...")
             }
         }
         #if os(iOS)

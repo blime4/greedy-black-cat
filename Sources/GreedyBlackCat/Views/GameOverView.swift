@@ -97,7 +97,13 @@ struct GameOverView: View {
                 .padding(.horizontal, 32)
             }
             .padding(40)
-            .background(Color(NSColor.windowBackgroundColor))
+            .background(
+                #if os(macOS)
+                Color(NSColor.windowBackgroundColor)
+                #else
+                Color(.systemBackground)
+                #endif
+            )
             .cornerRadius(20)
             .padding(40)
         }

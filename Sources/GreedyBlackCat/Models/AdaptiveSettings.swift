@@ -1,11 +1,9 @@
 import SwiftUI
 
 struct AdaptiveSettings {
-    @Environment(\.horizontalSizeClass) static var horizontalSizeClass
 
     #if os(iOS)
     static func detectDevice() -> DeviceType {
-        #if os(iOS)
         let userInterfaceIdiom = UIDevice.current.userInterfaceIdiom
         switch userInterfaceIdiom {
         case .phone:
@@ -15,9 +13,6 @@ struct AdaptiveSettings {
         default:
             return .iPhone
         }
-        #else
-        return .iPhone
-        #endif
     }
     #endif
 
