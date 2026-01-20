@@ -38,8 +38,10 @@ class GameViewModel: ObservableObject {
         // Load high score
         self.highScore = Self.loadHighScore()
 
-        // Generate initial food
-        self.food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
+        // Generate initial food (use local variables to avoid self access)
+        let gridW = self.settings.gridWidth
+        let gridH = self.settings.gridHeight
+        self.food = Self.generateFood(for: cat, gridWidth: gridW, gridHeight: gridH)
     }
 
     // MARK: - Game Control
