@@ -65,8 +65,7 @@ struct MainMenuView: View {
                             Image(systemName: "play.circle.fill")
                             Text("Start Game")
                         }
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 16)

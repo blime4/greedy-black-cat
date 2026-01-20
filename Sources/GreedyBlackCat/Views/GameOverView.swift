@@ -29,8 +29,7 @@ struct GameOverView: View {
                         Text("New High Score!")
                         Text("🏆")
                     }
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.yellow)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
@@ -47,19 +46,18 @@ struct GameOverView: View {
                             .font(.title3)
                             .foregroundColor(.secondary)
                         Text("\(score)")
-                            .font(.system(size: 56, weight: .bold, design: .monospaced))
+                            .font(.system(size: 56, weight: .bold))
                             .foregroundColor(.accentColor)
                     }
 
                     Divider()
-                        .background(Color(.gray.opacity(0.3)))
 
                     HStack(spacing: 4) {
                         Text("High Score")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         Text("\(highScore)")
-                            .font(.system(.body, design: .monospaced))
+                            .font(.system(.body))
                             .foregroundColor(.secondary)
                     }
                 }
@@ -72,8 +70,7 @@ struct GameOverView: View {
                             Image(systemName: "arrow.clockwise")
                             Text("Play Again")
                         }
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -97,13 +94,7 @@ struct GameOverView: View {
                 .padding(.horizontal, 32)
             }
             .padding(40)
-            .background(
-                #if os(macOS)
-                Color(NSColor.windowBackgroundColor)
-                #else
-                Color(.systemBackground)
-                #endif
-            )
+            .background(backgroundColor)
             .cornerRadius(20)
             .padding(40)
         }

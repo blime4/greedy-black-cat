@@ -255,16 +255,21 @@ struct GameView: View {
                 .padding(.horizontal, 40)
             }
             .padding(32)
-            .background(
-                #if os(macOS)
-                Color(NSColor.windowBackgroundColor)
-                #else
-                Color(.systemBackground)
-                #endif
-            )
+            .background(backgroundColor)
             .cornerRadius(16)
             .padding(40)
         }
+    }
+}
+
+// MARK: - Helpers
+extension View {
+    var backgroundColor: Color {
+        #if os(macOS)
+        return Color(NSColor.windowBackgroundColor)
+        #else
+        return Color(.systemBackground)
+        #endif
     }
 }
 
