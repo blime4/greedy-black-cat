@@ -54,12 +54,3 @@ struct FoodView: View {
         }
     }
 }
-
-#Preview {
-    VStack(spacing: 20) {
-        FoodView(food: Food(position: Position(x: 0, y: 0), type: .smallFish), cellSize: 40)
-        FoodView(food: Food(position: Position(x: 0, y: 0), type: .mediumFish), cellSize: 40)
-        FoodView(food: Food(position: Position(x: 0, y: 0), type: .largeFish), cellSize: 40)
-    }
-    .padding()
-}

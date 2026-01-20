@@ -52,7 +52,7 @@ struct GameOverView: View {
                     }
 
                     Divider()
-                        .background(Color(.separator))
+                        .background(Color(.gray.opacity(0.3)))
 
                     HStack(spacing: 4) {
                         Text("High Score")
@@ -90,25 +90,16 @@ struct GameOverView: View {
                         .foregroundColor(.accentColor)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(.systemGray6))
+                        .background(Color.gray.opacity(0.15))
                         .cornerRadius(12)
                     }
                 }
                 .padding(.horizontal, 32)
             }
             .padding(40)
-            .background(Color(.systemBackground))
+            .background(Color(NSColor.windowBackgroundColor))
             .cornerRadius(20)
             .padding(40)
         }
     }
-}
-
-#Preview {
-    GameOverView(
-        score: 1250,
-        highScore: 1000,
-        onRestart: {},
-        onMainMenu: {}
-    )
 }

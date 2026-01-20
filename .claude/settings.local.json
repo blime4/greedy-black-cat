@@ -5,7 +5,13 @@
       "Bash(brew install:*)",
       "Bash(xcodegen generate:*)",
       "Bash(xcodebuild:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(open GreedyBlackCat.xcodeproj)",
+      "Bash(xcode-select:*)",
+      "Bash(mdfind:*)",
+      "Bash(swiftc:*)",
+      "Bash(grep:*)"
     ]
   }
 }

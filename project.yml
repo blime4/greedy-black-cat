@@ -3,7 +3,7 @@ options:
   bundleIdPrefix: com.greedyblackcat
   deploymentTarget:
     iOS: "15.0"
-    macOS: "12.0"
+    macOS: "14.0"
   developmentLanguage: zh-Hans
   createIntermediateGroups: true
   generateEmptyDirectories: true
@@ -18,7 +18,7 @@ settings:
     ENABLE_PREVIEWS: true
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: true
     IPHONEOS_DEPLOYMENT_TARGET: "15.0"
-    MACOSX_DEPLOYMENT_TARGET: "12.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
 
 targets:
   GreedyBlackCat iOS:
@@ -51,7 +51,7 @@ targets:
   GreedyBlackCat macOS:
     type: application
     platform: macOS
-    deploymentTarget: "12.0"
+    deploymentTarget: "14.0"
     sources:
       - path: Sources/GreedyBlackCat
         includes: ["**/*.swift"]
@@ -66,7 +66,7 @@ targets:
         CFBundlePackageType: APPL
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        LSMinimumSystemVersion: "12.0"
+        LSMinimumSystemVersion: "14.0"
         NSHumanReadableCopyright: "© 2025 Greedy Black Cat"
         NSPrincipalClass: NSApplication
         LSApplicationCategoryType: public.app-category.games
@@ -92,7 +92,7 @@ targets:
   GreedyBlackCatTests macOS:
     type: bundle.unit-test
     platform: macOS
-    deploymentTarget: "12.0"
+    deploymentTarget: "14.0"
     sources:
       - path: Tests/GreedyBlackCatTests
         includes: ["**/*.swift"]

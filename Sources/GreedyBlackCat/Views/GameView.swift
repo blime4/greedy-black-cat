@@ -7,15 +7,20 @@ struct GameView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    init(viewModel: GameViewModel = GameViewModel()) {
+    init(viewModel: GameViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
         ZStack {
             // Background
+            #if os(macOS)
+            Color(NSColor.windowBackgroundColor)
+                .ignoresSafeArea()
+            #else
             Color(.systemBackground)
                 .ignoresSafeArea()
+            #endif
 
             VStack(spacing: 0) {
                 // HUD
@@ -40,7 +45,9 @@ struct GameView: View {
                 pauseMenuOverlay
             }
         }
+        #if os(iOS)
         .navigationBarHidden(true)
+        #endif
         #if os(macOS)
         .frame(minWidth: 600, minHeight: 600)
         .keyboardControls(viewModel: viewModel)
@@ -105,7 +112,7 @@ struct GameView: View {
             ZStack {
                 // Grid background
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.systemGray6))
+                    .fill(Color(white: 0.9, opacity: 1.0))
                     .frame(width: cellSize * CGFloat(viewModel.gridWidth),
                            height: cellSize * CGFloat(viewModel.gridHeight))
 
@@ -144,7 +151,7 @@ struct GameView: View {
             // Vertical lines
             ForEach(0...viewModel.gridWidth, id: \.self) { x in
                 Rectangle()
-                    .fill(Color(.separator))
+                    .fill(Color.gray.opacity(0.3))
                     .frame(width: 1)
                     .offset(x: CGFloat(x) * cellSize - cellSize * CGFloat(viewModel.gridWidth) / 2)
             }
@@ -152,7 +159,7 @@ struct GameView: View {
             // Horizontal lines
             ForEach(0...viewModel.gridHeight, id: \.self) { y in
                 Rectangle()
-                    .fill(Color(.separator))
+                    .fill(Color.gray.opacity(0.3))
                     .frame(height: 1)
                     .offset(y: CGFloat(y) * cellSize - cellSize * CGFloat(viewModel.gridHeight) / 2)
             }
@@ -188,7 +195,7 @@ struct GameView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground).opacity(0.9))
+        .background(Color.white.opacity(0.9))
         .cornerRadius(16)
     }
 
@@ -197,7 +204,7 @@ struct GameView: View {
             .font(.system(size: 32, weight: .semibold))
             .foregroundColor(.accentColor)
             .frame(width: 60, height: 60)
-            .background(Color(.systemGray5))
+            .background(Color.gray.opacity(0.2))
             .cornerRadius(12)
     }
     #endif
@@ -234,7 +241,7 @@ struct GameView: View {
                         Text("Restart")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(.systemGray5))
+                            .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
                     }
 
@@ -246,14 +253,14 @@ struct GameView: View {
                         Text("Quit to Menu")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(.systemGray5))
+                            .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
                     }
                 }
                 .padding(.horizontal, 40)
             }
             .padding(32)
-            .background(Color(.systemBackground))
+            .background(Color(NSColor.windowBackgroundColor))
             .cornerRadius(16)
             .padding(40)
         }
@@ -274,8 +281,4 @@ extension GameView {
             }
         )
     }
-}
-
-#Preview {
-    GameView()
 }

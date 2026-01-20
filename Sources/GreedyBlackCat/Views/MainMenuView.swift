@@ -103,13 +103,23 @@ struct MainMenuView: View {
                 }
                 .padding()
             }
+            #if os(iOS)
             .navigationBarHidden(true)
+            #endif
         }
+        #if os(iOS)
         .fullScreenCover(isPresented: $showingGame) {
             if let viewModel = gameViewModel {
                 GameContainerView(viewModel: viewModel)
             }
         }
+        #else
+        .sheet(isPresented: $showingGame) {
+            if let viewModel = gameViewModel {
+                GameContainerView(viewModel: viewModel)
+            }
+        }
+        #endif
         .onAppear {
             highScore = UserDefaults.standard.integer(forKey: "GreedyBlackCatHighScore")
         }
@@ -147,8 +157,4 @@ struct GameContainerView: View {
             }
         }
     }
-}
-
-#Preview {
-    MainMenuView()
 }

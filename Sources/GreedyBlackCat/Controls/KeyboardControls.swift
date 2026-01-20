@@ -11,20 +11,28 @@ struct KeyboardControls: ViewModifier {
             .focusable()
             .focused($isFocused)
             .onKeyPress { keyPress in
+                // 检查箭头键和特殊键
                 switch keyPress.key {
-                case .upArrow, .w:
+                case .upArrow:
                     viewModel.changeDirection(.up)
                     return .handled
-                case .downArrow, .s:
+                case .downArrow:
                     viewModel.changeDirection(.down)
                     return .handled
-                case .leftArrow, .a:
+                case .leftArrow:
                     viewModel.changeDirection(.left)
                     return .handled
-                case .rightArrow, .d:
+                case .rightArrow:
                     viewModel.changeDirection(.right)
                     return .handled
-                case .space, .escape:
+                case .space:
+                    if viewModel.gameState.isPlaying {
+                        viewModel.pauseGame()
+                    } else if viewModel.gameState.isPaused {
+                        viewModel.resumeGame()
+                    }
+                    return .handled
+                case .escape:
                     if viewModel.gameState.isPlaying {
                         viewModel.pauseGame()
                     } else if viewModel.gameState.isPaused {
@@ -37,8 +45,26 @@ struct KeyboardControls: ViewModifier {
                     }
                     return .handled
                 default:
-                    return .ignored
+                    break
                 }
+
+                // 检查字母键 (WASD)
+                let chars = keyPress.characters.lowercased()
+                if chars == "w" {
+                    viewModel.changeDirection(.up)
+                    return .handled
+                } else if chars == "s" {
+                    viewModel.changeDirection(.down)
+                    return .handled
+                } else if chars == "a" {
+                    viewModel.changeDirection(.left)
+                    return .handled
+                } else if chars == "d" {
+                    viewModel.changeDirection(.right)
+                    return .handled
+                }
+
+                return .ignored
             }
             .onAppear {
                 isFocused = true

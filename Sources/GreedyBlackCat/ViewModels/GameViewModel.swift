@@ -216,6 +216,7 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Cleanup
     deinit {
-        stopGameLoop()
+        gameTimer?.invalidate()
+        gameTimer = nil
     }
 }
