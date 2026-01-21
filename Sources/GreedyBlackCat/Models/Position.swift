@@ -16,4 +16,8 @@ struct Position: Equatable, Hashable {
     func isInBounds(width: Int, height: Int) -> Bool {
         return x >= 0 && x < width && y >= 0 && y < height
     }
+
+    func distance(to other: Position) -> Int {
+        return abs(x - other.x) + abs(y - other.y)
+    }
 }

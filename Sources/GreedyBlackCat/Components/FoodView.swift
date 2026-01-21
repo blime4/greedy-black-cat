@@ -3,17 +3,35 @@ import SwiftUI
 struct FoodView: View {
     let food: Food
     let cellSize: CGFloat
+    var catHead: Position?
 
     @State private var isFloating = false
     @State private var glowScale: CGFloat = 1.0
+    @State private var isMagnetic = false
 
-    init(food: Food, cellSize: CGFloat) {
+    init(food: Food, cellSize: CGFloat, catHead: Position? = nil) {
         self.food = food
         self.cellSize = cellSize
+        self.catHead = catHead
     }
 
     var body: some View {
         ZStack {
+            // Magnetic attraction rings
+            if isMagnetic {
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [fishColor.opacity(0.6), fishColor.opacity(0.1)],
+                            startPoint: .center,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 2
+                    )
+                    .frame(width: cellSize * 1.2, height: cellSize * 1.2)
+                    .rotationEffect(.degrees(isMagnetic ? 360 : 0))
+            }
+
             // Glow effect
             Circle()
                 .fill(fishColor.opacity(0.3))
@@ -59,9 +77,27 @@ struct FoodView: View {
                 .repeatForever(autoreverses: true),
             value: glowScale
         )
+        .animation(
+            Animation.linear(duration: 4.0)
+                .repeatForever(autoreverses: false),
+            value: isMagnetic
+        )
         .onAppear {
             isFloating = true
             glowScale = 0.9
+            updateMagneticState()
+        }
+        .onChange(of: catHead) { _ in
+            updateMagneticState()
+        }
+    }
+
+    private func updateMagneticState() {
+        if let catHead = catHead {
+            let distance = abs(food.position.x - catHead.x) + abs(food.position.y - catHead.y)
+            withAnimation {
+                isMagnetic = distance <= 3
+            }
         }
     }
 

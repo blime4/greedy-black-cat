@@ -197,7 +197,7 @@ struct GameView: View {
 
                 // Food
                 if let food = viewModel.food {
-                    FoodView(food: food, cellSize: cellSize)
+                    FoodView(food: food, cellSize: cellSize, catHead: viewModel.cat.head)
                         .position(
                             x: CGFloat(food.position.x) * cellSize + cellSize / 2,
                             y: CGFloat(food.position.y) * cellSize + cellSize / 2
@@ -235,6 +235,18 @@ struct GameView: View {
                         x: CGFloat(position.x) * cellSize + cellSize / 2,
                         y: CGFloat(position.y) * cellSize + cellSize / 2
                     )
+                }
+
+                // Ghost trail effect
+                ForEach(viewModel.trailPoints) { trailPoint in
+                    Circle()
+                        .fill(Color.accentColor.opacity(trailPoint.alpha * 0.3))
+                        .frame(width: cellSize * 0.6, height: cellSize * 0.6)
+                        .blur(radius: 4)
+                        .position(
+                            x: CGFloat(trailPoint.position.x) * cellSize + cellSize / 2,
+                            y: CGFloat(trailPoint.position.y) * cellSize + cellSize / 2
+                        )
                 }
 
                 // Score popups

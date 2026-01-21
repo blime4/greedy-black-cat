@@ -26,6 +26,7 @@
 		39E688F5C01B6384DEFC2403 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DEC2231942E134DB03319D /* GameViewModel.swift */; };
 		3EDD38D1D3489691336D22D7 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF8E4569AE0F39435F85FE5 /* GameView.swift */; };
 		470EAC650F91FB86087F6B86 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06169E0B76B6724D9A497F2E /* Cat.swift */; };
+		52053C4D2371044CF0C0EEC1 /* TrailEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D7D6804678127EB6946BD4 /* TrailEffect.swift */; };
 		5415C8271BC8EAA01C018B88 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06169E0B76B6724D9A497F2E /* Cat.swift */; };
 		5A85BA01AF59213C81090CE9 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
 		65CC0E7DA92CD6F065DF1B66 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4669B2045BDD6FDAF2E0EFA7 /* AchievementsView.swift */; };
@@ -52,6 +53,7 @@
 		D1C8400D2020E0D457F9C8A3 /* ObstacleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E26CA68EDD6B51573F5D74F /* ObstacleView.swift */; };
 		D26A4C01C24B2B9B3CD4BB63 /* AdaptiveSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */; };
 		D3077CF55BA323FE34A738B0 /* GreedyBlackCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */; };
+		D484301D04F597081DA21F91 /* TrailEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D7D6804678127EB6946BD4 /* TrailEffect.swift */; };
 		D83161D0BBCD5FAC9B5E6CCC /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E85641C6D3F53D7E30431 /* TouchControls.swift */; };
 		DDC07698414003BD417AD68A /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF8E4569AE0F39435F85FE5 /* GameView.swift */; };
 		E1B86F6F73D2582283D05448 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FAB072594A321DAA10A907 /* Achievement.swift */; };
@@ -120,6 +122,7 @@
 		BDA097A765CAA4DE2A0E7B6B /* GameButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameButtonStyle.swift; sourceTree = "<group>"; };
 		D39D5D28B2210DA953FEFE2C /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		DEADB90A368BC7F7CE1CDFD9 /* GreedyBlackCat macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GreedyBlackCat macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9D7D6804678127EB6946BD4 /* TrailEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailEffect.swift; sourceTree = "<group>"; };
 		FA0E5E3B8830D5EA209282D1 /* FoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -249,6 +252,7 @@
 				B24790CC4365BFFC4BCD6EB5 /* Position.swift */,
 				A355C5AADB8BFC60593B12E1 /* PowerUp.swift */,
 				7610C3E3C2B9FA5C08520890 /* ScorePopup.swift */,
+				E9D7D6804678127EB6946BD4 /* TrailEffect.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -415,6 +419,7 @@
 				E3ECEED769BCE6577CC90BBA /* ScorePopupView.swift in Sources */,
 				95F4BA5A8CB59279857FAE45 /* SettingsView.swift in Sources */,
 				34EE7B903BC2D7CB05ABB003 /* TouchControls.swift in Sources */,
+				52053C4D2371044CF0C0EEC1 /* TrailEffect.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +471,7 @@
 				9D800E6E5081D9F31DE249D4 /* ScorePopupView.swift in Sources */,
 				E405694AEAE2AC411B18B886 /* SettingsView.swift in Sources */,
 				D83161D0BBCD5FAC9B5E6CCC /* TouchControls.swift in Sources */,
+				D484301D04F597081DA21F91 /* TrailEffect.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,6 +25,10 @@ class GameViewModel: ObservableObject {
     @Published var foodEaten: Int = 0
     @Published var powerUpsCollected: Int = 0
     @Published var dashesUsed: Int = 0
+    @Published var trailPoints: [TrailPoint] = []
+
+    // MARK: - Trail System
+    private var trailSystem = TrailSystem()
 
     // MARK: - Combo System
     private var lastEatTime: Date?
@@ -125,6 +129,8 @@ class GameViewModel: ObservableObject {
         powerUpsCollected = 0
         dashesUsed = 0
         timeRemaining = gameMode.timeLimit ?? 0
+        trailSystem.clear()
+        trailPoints = []
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
     }
 
@@ -187,14 +193,23 @@ class GameViewModel: ObservableObject {
         // Update dash cooldown
         updateDashCooldown()
 
+        // Update trails
+        trailPoints = trailSystem.update(decayRate: currentSpeed)
+
         // Process input queue
         if !inputQueue.isEmpty {
             let newDirection = inputQueue.removeFirst()
             cat.changeDirection(newDirection)
         }
 
-        // Calculate new head position
-        let newPosition = cat.head.applying(cat.direction.offset)
+        // Calculate new head position with magnetic attraction
+        var newPosition = cat.head.applying(cat.direction.offset)
+
+        // Magnetic attraction to food when close (3 cells)
+        if let foodPosition = food?.position,
+           cat.head.distance(to: foodPosition) <= 3 {
+            newPosition = getMagnetizedPosition(toward: foodPosition)
+        }
 
         // Check wall collision (unless invincible)
         if !isInvincible && !newPosition.isInBounds(width: gridWidth, height: gridHeight) {
@@ -218,6 +233,9 @@ class GameViewModel: ObservableObject {
                 return
             }
         }
+
+        // Add trail point before moving
+        trailSystem.addPoint(cat.head)
 
         // Check food collision
         let ateFood = food?.position == newPosition
@@ -245,6 +263,34 @@ class GameViewModel: ObservableObject {
 
         // Spawn obstacles as difficulty increases
         spawnObstaclesIfNeeded()
+    }
+
+    private func getMagnetizedPosition(toward target: Position) -> Position {
+        let dx = target.x - cat.head.x
+        let dy = target.y - cat.head.y
+
+        // If aligned on one axis, prefer that axis
+        if dx == 0 {
+            return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+        } else if dy == 0 {
+            return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+        }
+
+        // Otherwise use current direction but bias toward food
+        switch cat.direction {
+        case .up:
+            if dy < 0 && abs(dy) >= abs(dx) { return cat.head.applying(cat.direction.offset) }
+            return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+        case .down:
+            if dy > 0 && abs(dy) >= abs(dx) { return cat.head.applying(cat.direction.offset) }
+            return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+        case .left:
+            if dx < 0 && abs(dx) >= abs(dy) { return cat.head.applying(cat.direction.offset) }
+            return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+        case .right:
+            if dx > 0 && abs(dx) >= abs(dy) { return cat.head.applying(cat.direction.offset) }
+            return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+        }
     }
 
     private func handleFoodEaten(at position: Position) {
