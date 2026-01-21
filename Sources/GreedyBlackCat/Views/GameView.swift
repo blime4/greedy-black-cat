@@ -125,19 +125,27 @@ struct GameView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "timer")
                         .font(.subheadline)
-                        .foregroundColor(viewModel.timeRemaining < 30 ? .red : .primary)
+                        .foregroundColor(urgencyColor)
+                        .symbolEffect(.pulse, options: .repeating, isActive: viewModel.isTimeRunningOut)
                     Text("\(Int(viewModel.timeRemaining))s")
                         .font(.system(.body, design: .monospaced))
                         .fontWeight(.semibold)
-                        .foregroundColor(viewModel.timeRemaining < 30 ? .red : .primary)
+                        .foregroundColor(urgencyColor)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(viewModel.timeRemaining < 30 ? Color.red.opacity(0.2) : Color.white.opacity(0.8))
-                        .shadow(color: viewModel.timeRemaining < 30 ? Color.red.opacity(0.3) : Color.black.opacity(0.05), radius: 3)
+                        .fill(urgencyBackgroundColor)
+                        .shadow(color: urgencyShadowColor, radius: viewModel.isTimeRunningOut ? 8 : 3)
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(urgencyColor, lineWidth: viewModel.isTimeRunningOut ? 2 : 0)
+                        .opacity(viewModel.isTimeRunningOut ? 0.5 : 0)
+                )
+                .scaleEffect(viewModel.isTimeRunningOut ? 1.05 : 1.0)
+                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.isTimeRunningOut)
             }
 
             // Combo indicator in HUD
@@ -613,6 +621,36 @@ extension View {
         #else
         return Color(.systemBackground)
         #endif
+    }
+}
+
+// MARK: - Urgency Color Helpers
+private extension GameView {
+    var urgencyColor: Color {
+        switch viewModel.timeRemaining {
+        case 0...10: return .red
+        case 11...20: return .orange
+        case 21...30: return .yellow
+        default: return .primary
+        }
+    }
+
+    var urgencyBackgroundColor: Color {
+        switch viewModel.timeRemaining {
+        case 0...10: return Color.red.opacity(0.3)
+        case 11...20: return Color.orange.opacity(0.25)
+        case 21...30: return Color.yellow.opacity(0.2)
+        default: return Color.white.opacity(0.8)
+        }
+    }
+
+    var urgencyShadowColor: Color {
+        switch viewModel.timeRemaining {
+        case 0...10: return Color.red.opacity(0.6)
+        case 11...20: return Color.orange.opacity(0.4)
+        case 21...30: return Color.yellow.opacity(0.3)
+        default: return Color.black.opacity(0.05)
+        }
     }
 }
 

@@ -21,6 +21,7 @@ class GameViewModel: ObservableObject {
     @Published var screenShake: CGFloat = 0
     @Published var cameraZoom: CGFloat = 1.0
     @Published var gameOverImpact: Bool = false
+    @Published var isTimeRunningOut: Bool = false
     @Published var canDash: Bool = true
     @Published var isDashing: Bool = false
     @Published var gameMode: GameMode = .classic
@@ -151,6 +152,18 @@ class GameViewModel: ObservableObject {
                 guard let self = self else { return }
                 if self.timeRemaining > 0 {
                     self.timeRemaining -= 0.1
+
+                    // Check for urgency state (less than 10 seconds)
+                    let wasRunningOut = self.isTimeRunningOut
+                    self.isTimeRunningOut = self.timeRemaining <= 10
+
+                    // Trigger effects when entering urgency state
+                    if !wasRunningOut && self.isTimeRunningOut {
+                        self.screenFlashIntensity = 0.2
+                        #if os(iOS)
+                        HapticFeedback.warning()
+                        #endif
+                    }
                 } else {
                     self.timeUp()
                 }

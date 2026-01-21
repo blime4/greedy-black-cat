@@ -38,6 +38,11 @@ struct TouchControls: ViewModifier {
                         let horizontalAmount = value.translation.width
                         let verticalAmount = value.translation.height
 
+                        // Haptic feedback on swipe completion
+                        #if os(iOS)
+                        HapticFeedback.light()
+                        #endif
+
                         if abs(horizontalAmount) > abs(verticalAmount) {
                             // Horizontal swipe
                             if horizontalAmount > 0 {
