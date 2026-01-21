@@ -20,6 +20,11 @@ class GameViewModel: ObservableObject {
     @Published var screenShake: CGFloat = 0
     @Published var canDash: Bool = true
     @Published var isDashing: Bool = false
+    @Published var gameMode: GameMode = .classic
+    @Published var timeRemaining: TimeInterval = 0
+    @Published var foodEaten: Int = 0
+    @Published var powerUpsCollected: Int = 0
+    @Published var dashesUsed: Int = 0
 
     // MARK: - Combo System
     private var lastEatTime: Date?
@@ -29,8 +34,9 @@ class GameViewModel: ObservableObject {
     private var dashCooldown: TimeInterval = 0
     private let dashCooldownTime: TimeInterval = 3.0
 
-    // MARK: - Timer
+    // MARK: - Timer System
     private var gameTimer: Timer?
+    private var timeTimer: Timer?
     private var currentSpeed: TimeInterval
 
     // MARK: - Input Queue
@@ -42,14 +48,14 @@ class GameViewModel: ObservableObject {
     var gridHeight: Int { settings.gridHeight }
 
     // MARK: - Initialization
-    init(settings: GameSettings? = nil) {
+    init(settings: GameSettings? = nil, gameMode: GameMode = .classic) {
         // Compute all values in local variables first (no self access)
         let theSettings = settings ?? AdaptiveSettings.gameSettings()
-        let theSpeed = theSettings.tickInterval
+        let theSpeed = theSettings.tickInterval / gameMode.speedMultiplier
         let startX = theSettings.gridWidth / 2
         let startY = theSettings.gridHeight / 2
         let theCat = Cat(startPosition: Position(x: startX, y: startY))
-        let theHighScore = Self.loadHighScore()
+        let theHighScore = Self.loadHighScore(for: gameMode)
         let gridW = theSettings.gridWidth
         let gridH = theSettings.gridHeight
         let theFood = Self.generateFood(for: theCat, gridWidth: gridW, gridHeight: gridH)
@@ -60,6 +66,8 @@ class GameViewModel: ObservableObject {
         self.cat = theCat
         self.highScore = theHighScore
         self.food = theFood
+        self.gameMode = gameMode
+        self.timeRemaining = gameMode.timeLimit ?? 0
     }
 
     // MARK: - Game Control
@@ -67,18 +75,21 @@ class GameViewModel: ObservableObject {
         gameState = .playing
         resetGame()
         startGameLoop()
+        startTimeTimer()
     }
 
     func pauseGame() {
         guard gameState == .playing else { return }
         gameState = .paused
         stopGameLoop()
+        stopTimeTimer()
     }
 
     func resumeGame() {
         guard gameState == .paused else { return }
         gameState = .playing
         startGameLoop()
+        startTimeTimer()
     }
 
     func restartGame() {
@@ -88,6 +99,7 @@ class GameViewModel: ObservableObject {
 
     func quitToMenu() {
         stopGameLoop()
+        stopTimeTimer()
         gameState = .menu
     }
 
@@ -96,7 +108,7 @@ class GameViewModel: ObservableObject {
         let startY = settings.gridHeight / 2
         cat = Cat(startPosition: Position(x: startX, y: startY))
         score = 0
-        currentSpeed = settings.tickInterval
+        currentSpeed = settings.tickInterval / gameMode.speedMultiplier
         inputQueue = []
         comboCount = 0
         lastEatTime = nil
@@ -109,7 +121,43 @@ class GameViewModel: ObservableObject {
         canDash = true
         isDashing = false
         dashCooldown = 0
+        foodEaten = 0
+        powerUpsCollected = 0
+        dashesUsed = 0
+        timeRemaining = gameMode.timeLimit ?? 0
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
+    }
+
+    private func startTimeTimer() {
+        stopTimeTimer()
+        guard gameMode.hasTimeLimit else { return }
+
+        timeTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                guard let self = self else { return }
+                if self.timeRemaining > 0 {
+                    self.timeRemaining -= 0.1
+                } else {
+                    self.timeUp()
+                }
+            }
+        }
+    }
+
+    private func stopTimeTimer() {
+        timeTimer?.invalidate()
+        timeTimer = nil
+    }
+
+    private func timeUp() {
+        stopTimeTimer()
+        stopGameLoop()
+        gameState = .gameOver
+
+        if score > highScore {
+            highScore = score
+            Self.saveHighScore(highScore, for: gameMode)
+        }
     }
 
     // MARK: - Game Loop
@@ -202,6 +250,8 @@ class GameViewModel: ObservableObject {
     private func handleFoodEaten(at position: Position) {
         guard let currentFood = food else { return }
 
+        foodEaten += 1
+
         // Handle combo system
         let now = Date()
         if let lastTime = lastEatTime, now.timeIntervalSince(lastTime) <= comboWindow {
@@ -216,6 +266,11 @@ class GameViewModel: ObservableObject {
         let points = currentFood.points * comboMultiplier
         score += points
 
+        // Screen flash on combo milestones
+        if comboCount == 3 || comboCount == 5 {
+            screenShake = CGFloat(comboCount)
+        }
+
         // Spawn particles
         spawnParticles(at: position, color: currentFood.type.color, count: 8)
 
@@ -229,8 +284,8 @@ class GameViewModel: ObservableObject {
         // Generate new food
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
 
-        // Chance to spawn power-up
-        if Double.random(in: 0...1) < 0.15 {
+        // Chance to spawn power-up (only in modes that allow it)
+        if gameMode.hasPowerUps && Double.random(in: 0...1) < 0.15 {
             spawnPowerUp()
         }
 
@@ -264,9 +319,12 @@ class GameViewModel: ObservableObject {
     }
 
     private func spawnObstaclesIfNeeded() {
-        // Spawn obstacles every 50 points, max 5 obstacles
-        let obstacleCount = score / 50
-        let targetObstacles = min(obstacleCount, 5)
+        // Only spawn in modes that allow obstacles
+        guard gameMode.hasObstacles else { return }
+
+        // Spawn obstacles based on game mode settings
+        let obstacleCount = score / gameMode.obstacleSpawnRate
+        let targetObstacles = min(obstacleCount, gameMode.maxObstacles)
 
         if obstacles.count < targetObstacles {
             spawnObstacle()
@@ -311,6 +369,7 @@ class GameViewModel: ObservableObject {
         isDashing = true
         canDash = false
         dashCooldown = dashCooldownTime
+        dashesUsed += 1
 
         // Move 3 spaces instantly in current direction
         for _ in 0..<3 {
@@ -355,16 +414,18 @@ class GameViewModel: ObservableObject {
     }
 
     private func collectPowerUp(_ powerUp: PowerUp) {
+        powerUpsCollected += 1
+
         let activePowerUp = ActivePowerUp(type: powerUp.type, duration: powerUp.type.duration)
         activePowerUps.append(activePowerUp)
 
         // Apply immediate effect based on type
         switch powerUp.type {
         case .speedBoost:
-            currentSpeed = settings.tickInterval * 0.7
+            currentSpeed = (settings.tickInterval / gameMode.speedMultiplier) * 0.7
             startGameLoop()
         case .slowMotion:
-            currentSpeed = settings.tickInterval * 1.5
+            currentSpeed = (settings.tickInterval / gameMode.speedMultiplier) * 1.5
             startGameLoop()
         case .doublePoints, .invincibility:
             break // These are handled during scoring
@@ -373,6 +434,9 @@ class GameViewModel: ObservableObject {
         // Show score popup for power-up
         let popup = ScorePopup(points: 50, position: powerUp.position)
         scorePopups.append(popup)
+
+        // Spawn particles for power-up collection
+        spawnParticles(at: powerUp.position, color: powerUp.type.color, count: 15)
     }
 
     private func updatePowerUps() {
@@ -456,14 +520,16 @@ class GameViewModel: ObservableObject {
     }
 
     // MARK: - High Score Persistence
-    private static let highScoreKey = "GreedyBlackCatHighScore"
-
-    private static func loadHighScore() -> Int {
-        return UserDefaults.standard.integer(forKey: highScoreKey)
+    private static func highScoreKey(for mode: GameMode) -> String {
+        return "GreedyBlackCatHighScore_\(mode.rawValue)"
     }
 
-    private static func saveHighScore(_ score: Int) {
-        UserDefaults.standard.set(score, forKey: highScoreKey)
+    private static func loadHighScore(for mode: GameMode) -> Int {
+        return UserDefaults.standard.integer(forKey: highScoreKey(for: mode))
+    }
+
+    private static func saveHighScore(_ score: Int, for mode: GameMode) {
+        UserDefaults.standard.set(score, forKey: highScoreKey(for: mode))
     }
 
     // MARK: - Cleanup

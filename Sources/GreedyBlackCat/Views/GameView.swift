@@ -76,9 +76,9 @@ struct GameView: View {
 
     // MARK: - HUD
     private var hudView: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             // Score
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Text("Score:")
                     .font(.headline)
                     .foregroundColor(.primary)
@@ -87,50 +87,68 @@ struct GameView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.accentColor)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .fill(Color.white.opacity(0.8))
                     .shadow(color: Color.black.opacity(0.05), radius: 3)
             )
 
+            // Time remaining (Time Attack mode)
+            if viewModel.gameMode.hasTimeLimit {
+                HStack(spacing: 6) {
+                    Image(systemName: "timer")
+                        .font(.subheadline)
+                        .foregroundColor(viewModel.timeRemaining < 30 ? .red : .primary)
+                    Text("\(Int(viewModel.timeRemaining))s")
+                        .font(.system(.body, design: .monospaced))
+                        .fontWeight(.semibold)
+                        .foregroundColor(viewModel.timeRemaining < 30 ? .red : .primary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(viewModel.timeRemaining < 30 ? Color.red.opacity(0.2) : Color.white.opacity(0.8))
+                        .shadow(color: viewModel.timeRemaining < 30 ? Color.red.opacity(0.3) : Color.black.opacity(0.05), radius: 3)
+                )
+            }
+
             // Combo indicator in HUD
             if viewModel.comboCount > 1 {
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundColor(.orange)
                     Text("\(viewModel.comboCount)x")
-                        .font(.system(.body, design: .monospaced))
+                        .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(.orange)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(Color.orange.opacity(0.2))
-                        .shadow(color: Color.orange.opacity(0.2), radius: 3)
                 )
             }
 
             Spacer()
 
             // High Score
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: "trophy.fill")
-                    .font(.subheadline)
+                    .font(.caption)
                     .foregroundColor(.yellow)
                 Text("\(viewModel.highScore)")
-                    .font(.system(.body, design: .monospaced))
-                    .fontWeight(.semibold)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .fill(Color.white.opacity(0.8))
                     .shadow(color: Color.black.opacity(0.05), radius: 3)
             )
@@ -361,12 +379,29 @@ struct GameView: View {
             Color.black.opacity(0.7)
                 .ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 20) {
                 Text("Paused")
                     .font(.system(size: 36, weight: .bold))
                     .foregroundColor(.white)
 
-                VStack(spacing: 16) {
+                // Game Stats
+                VStack(spacing: 12) {
+                    HStack(spacing: 40) {
+                        StatItem(icon: "fish", label: "Eaten", value: "\(viewModel.foodEaten)")
+                        StatItem(icon: "bolt.fill", label: "Dashes", value: "\(viewModel.dashesUsed)")
+                    }
+                    HStack(spacing: 40) {
+                        StatItem(icon: "star.fill", label: "Power-ups", value: "\(viewModel.powerUpsCollected)")
+                        StatItem(icon: viewModel.gameMode.icon, label: "Mode", value: viewModel.gameMode.displayName)
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.1))
+                )
+
+                VStack(spacing: 12) {
                     Button(action: {
                         viewModel.resumeGame()
                         showingPauseMenu = false
@@ -415,6 +450,29 @@ struct GameView: View {
             .cornerRadius(16)
             .padding(40)
         }
+    }
+}
+
+// Stat Item Component for Pause Menu
+struct StatItem: View {
+    let icon: String
+    let label: String
+    let value: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(.accentColor)
+            Text(value)
+                .font(.system(.title2, design: .monospaced))
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
