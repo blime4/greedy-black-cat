@@ -19,6 +19,7 @@ class GameViewModel: ObservableObject {
     @Published var scorePopups: [ScorePopup] = []
     @Published var hitEffects: [HitEffect] = []
     @Published var screenShake: CGFloat = 0
+    @Published var cameraZoom: CGFloat = 1.0
     @Published var canDash: Bool = true
     @Published var isDashing: Bool = false
     @Published var gameMode: GameMode = .classic
@@ -343,6 +344,13 @@ class GameViewModel: ObservableObject {
             self.comboMultiplier = comboCount
             showComboPopup = true
 
+            // Camera zoom effect for combo
+            cameraZoom = comboCount == 5 ? 1.15 : 1.08
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                cameraZoom = 1.0
+            }
+
             // Hide popup after animation
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 800_000_000)
@@ -570,6 +578,13 @@ class GameViewModel: ObservableObject {
 
         // Screen flash for power-up collection
         screenFlashIntensity = 0.4
+
+        // Camera zoom for power-up
+        cameraZoom = 1.1
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            cameraZoom = 1.0
+        }
     }
 
     private func updatePowerUps() {

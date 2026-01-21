@@ -6,6 +6,7 @@ struct CatSegmentView: View {
     let cellSize: CGFloat
     var comboCount: Int = 0
     var isInvincible: Bool = false
+    var gameMode: GameMode = .classic
 
     @State private var mouthScale: CGFloat = 1.0
     @State private var appearScale: CGFloat = 0.0
@@ -21,6 +22,19 @@ struct CatSegmentView: View {
         case 2...3: return .happy
         case 4...: return .excited
         default: return .surprised
+        }
+    }
+
+    private var catColor: Color {
+        switch gameMode {
+        case .classic:
+            return Color(hex: "1A1A1A") // Black
+        case .zen:
+            return Color(hex: "FFB6C1") // Light pink
+        case .timeAttack:
+            return Color(hex: "FF6B6B") // Red
+        case .hardcore:
+            return Color(hex: "8B008B") // Dark purple
         }
     }
 
@@ -60,7 +74,7 @@ struct CatSegmentView: View {
             // Main head shape with invincibility glow
             Group {
                 RoundedRectangle(cornerRadius: cellSize * 0.3)
-                    .fill(Color(hex: "1A1A1A"))
+                    .fill(catColor)
 
                 if isInvincible {
                     RoundedRectangle(cornerRadius: cellSize * 0.3)
@@ -184,14 +198,14 @@ struct CatSegmentView: View {
             .fill(
                 LinearGradient(
                     colors: [
-                        Color(hex: "1A1A1A"),
-                        Color(hex: "2D2D2D")
+                        catColor,
+                        catColor.opacity(0.8)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             )
-            .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
+            .shadow(color: catColor.opacity(0.3), radius: 2, x: 0, y: 1)
     }
 }
 

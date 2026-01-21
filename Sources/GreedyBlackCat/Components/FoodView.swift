@@ -18,6 +18,30 @@ struct FoodView: View {
 
     var body: some View {
         ZStack {
+            // Points indicator badge
+            if food.type != .smallFish {
+                Text("\(food.points)")
+                    .font(.system(size: cellSize * 0.2, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, cellSize * 0.08)
+                    .padding(.vertical, cellSize * 0.04)
+                    .background(
+                        Capsule()
+                            .fill(fishColor)
+                            .shadow(color: fishColor.opacity(0.5), radius: 3)
+                    )
+                    .offset(x: cellSize * 0.2, y: -cellSize * 0.3)
+            }
+
+            // Star sparkle for rare fish
+            if food.type == .largeFish {
+                Image(systemName: "sparkle")
+                    .font(.system(size: cellSize * 0.15))
+                    .foregroundColor(.yellow)
+                    .offset(x: -cellSize * 0.25, y: -cellSize * 0.25)
+                    .rotationEffect(.degrees(isFloating ? 15 : -15))
+            }
+
             // Magnetic attraction rings
             if isMagnetic {
                 Circle()
@@ -41,7 +65,7 @@ struct FoodView: View {
 
             fishBody
                 .fill(fishColor)
-                .frame(width: cellSize * 0.7, height: cellSize * 0.5)
+                .frame(width: fishSize, height: cellSize * 0.5)
 
             // Eye
             Circle()
@@ -108,6 +132,17 @@ struct FoodView: View {
 
     private var fishBody: some Shape {
         Ellipse()
+    }
+
+    private var fishSize: CGFloat {
+        switch food.type {
+        case .smallFish:
+            return cellSize * 0.6
+        case .mediumFish:
+            return cellSize * 0.75
+        case .largeFish:
+            return cellSize * 0.9
+        }
     }
 
     private var fishColor: Color {

@@ -6,6 +6,10 @@ struct GameOverView: View {
     let onRestart: () -> Void
     let onMainMenu: () -> Void
 
+    @State private var showContent = false
+    @State private var scoreScale: CGFloat = 0.5
+    @State private var trophyRotation: Double = 0
+
     var isNewHighScore: Bool {
         score >= highScore && score > 0
     }
@@ -21,13 +25,17 @@ struct GameOverView: View {
                 Text("Game Over")
                     .font(.system(size: 48, weight: .bold))
                     .foregroundColor(.white)
+                    .scaleEffect(showContent ? 1 : 0.5)
+                    .opacity(showContent ? 1 : 0)
 
-                // New High Score Badge
+                // New High Score Badge with animation
                 if isNewHighScore {
                     HStack(spacing: 8) {
                         Text("🏆")
+                            .rotationEffect(.degrees(trophyRotation))
                         Text("New High Score!")
                         Text("🏆")
+                            .rotationEffect(.degrees(-trophyRotation))
                     }
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.yellow)
@@ -37,6 +45,8 @@ struct GameOverView: View {
                         Capsule()
                             .fill(Color.yellow.opacity(0.2))
                     )
+                    .scaleEffect(showContent ? 1 : 0)
+                    .shadow(color: .yellow.opacity(0.5), radius: 15)
                 }
 
                 // Score Display
@@ -48,6 +58,7 @@ struct GameOverView: View {
                         Text("\(score)")
                             .font(.system(size: 56, weight: .bold))
                             .foregroundColor(.accentColor)
+                            .scaleEffect(scoreScale)
                     }
 
                     Divider()
@@ -62,6 +73,11 @@ struct GameOverView: View {
                     }
                 }
                 .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white.opacity(0.1))
+                )
+                .scaleEffect(showContent ? 1 : 0.8)
 
                 // Buttons
                 VStack(spacing: 12) {
@@ -101,6 +117,19 @@ struct GameOverView: View {
             .background(backgroundColor)
             .cornerRadius(20)
             .padding(40)
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                showContent = true
+            }
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.2)) {
+                scoreScale = 1.0
+            }
+            if isNewHighScore {
+                withAnimation(.linear(duration: 2).repeatForever(autoreverses: true).delay(0.4)) {
+                    trophyRotation = 15
+                }
+            }
         }
     }
 }

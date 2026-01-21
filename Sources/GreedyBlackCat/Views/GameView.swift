@@ -3,6 +3,8 @@ import SwiftUI
 struct GameView: View {
     @ObservedObject var viewModel: GameViewModel
     @State private var showingPauseMenu = false
+    @State private var pauseMenuScale: CGFloat = 0.8
+    @State private var pauseMenuOpacity: Double = 0
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -32,8 +34,10 @@ struct GameView: View {
                 // Game Grid
                 gameGridView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .scaleEffect(viewModel.cameraZoom)
                     .offset(x: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake),
                             y: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake))
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.cameraZoom)
 
                 // Controls (iOS only)
                 #if os(iOS)
@@ -248,7 +252,8 @@ struct GameView: View {
                         direction: viewModel.cat.direction,
                         cellSize: cellSize,
                         comboCount: viewModel.comboCount,
-                        isInvincible: viewModel.isInvincible
+                        isInvincible: viewModel.isInvincible,
+                        gameMode: viewModel.gameMode
                     )
                     .position(
                         x: CGFloat(position.x) * cellSize + cellSize / 2,
@@ -426,6 +431,7 @@ struct GameView: View {
             // Semi-transparent background
             Color.black.opacity(0.7)
                 .ignoresSafeArea()
+                .opacity(pauseMenuOpacity)
 
             VStack(spacing: 20) {
                 Text("Paused")
@@ -497,6 +503,14 @@ struct GameView: View {
             .background(backgroundColor)
             .cornerRadius(16)
             .padding(40)
+            .scaleEffect(pauseMenuScale)
+            .opacity(pauseMenuOpacity)
+        }
+        .onChange(of: viewModel.gameState.isPaused) { _, isPaused in
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                pauseMenuScale = isPaused ? 1.0 : 0.8
+                pauseMenuOpacity = isPaused ? 1.0 : 0
+            }
         }
     }
 }
