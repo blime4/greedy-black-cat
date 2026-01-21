@@ -5,6 +5,7 @@ struct MainMenuView: View {
     @State private var showingGame = false
     @State private var showingAbout = false
     @State private var showingSettings = false
+    @State private var showingAchievements = false
     @State private var gameViewModel: GameViewModel?
 
     var body: some View {
@@ -92,9 +93,16 @@ struct MainMenuView: View {
                         .pressEffect()
 
                         // Secondary Buttons
-                        HStack(spacing: 40) {
+                        HStack(spacing: 30) {
                             Button("About") {
                                 showingAbout = true
+                            }
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .pressEffect()
+
+                            Button("🏆 Achievements") {
+                                showingAchievements = true
                             }
                             .font(.body)
                             .foregroundColor(.secondary)
@@ -133,6 +141,9 @@ struct MainMenuView: View {
         #endif
         .sheet(isPresented: $showingAbout) {
             AboutView()
+        }
+        .sheet(isPresented: $showingAchievements) {
+            AchievementsView()
         }
         #if os(macOS)
         .sheet(isPresented: $showingSettings) {

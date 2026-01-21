@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		01FAC3FB874820455D6F97A1 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D5D28B2210DA953FEFE2C /* AboutView.swift */; };
 		03AB0380691817407CB7DD2D /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256FDB40B3B77E72C4B5E1AF /* GameState.swift */; };
+		042D822A35F825343E6B9B34 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FAB072594A321DAA10A907 /* Achievement.swift */; };
 		076B08EDBF50334A40F40DA6 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2F0B53D6A9B8A116B0F999 /* Food.swift */; };
 		08249C1C86681BFD82868F90 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DEC2231942E134DB03319D /* GameViewModel.swift */; };
 		0F5D1951738A8DB4E886AD13 /* GameButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA097A765CAA4DE2A0E7B6B /* GameButtonStyle.swift */; };
@@ -16,6 +17,7 @@
 		15C610CBB04C736CAC422866 /* ScorePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7610C3E3C2B9FA5C08520890 /* ScorePopup.swift */; };
 		17B8C7E9C471B420F390CAD7 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24790CC4365BFFC4BCD6EB5 /* Position.swift */; };
 		250A9764B06886EF3F065AC6 /* PowerUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248DAB3B8DF2A1BF6F9A2111 /* PowerUpView.swift */; };
+		273C6ED62F05B3C9F69A4833 /* CatEmotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874B41F4233BAAA6D04B8896 /* CatEmotion.swift */; };
 		338F8D53977F2CDBC30E4982 /* GreedyBlackCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */; };
 		3402B84200207547199DA87B /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7502887DC09AA1F649050266 /* GameMode.swift */; };
 		34EE7B903BC2D7CB05ABB003 /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E85641C6D3F53D7E30431 /* TouchControls.swift */; };
@@ -26,7 +28,9 @@
 		470EAC650F91FB86087F6B86 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06169E0B76B6724D9A497F2E /* Cat.swift */; };
 		5415C8271BC8EAA01C018B88 /* Cat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06169E0B76B6724D9A497F2E /* Cat.swift */; };
 		5A85BA01AF59213C81090CE9 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
+		65CC0E7DA92CD6F065DF1B66 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4669B2045BDD6FDAF2E0EFA7 /* AchievementsView.swift */; };
 		688D31EC69E34DEF56874662 /* KeyboardControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38662805A9C16C22E03A08B /* KeyboardControls.swift */; };
+		68CC3DDCC7260F7A334D9036 /* CatEmotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874B41F4233BAAA6D04B8896 /* CatEmotion.swift */; };
 		6C1A3E021E4E46B79A357FBA /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0E5E3B8830D5EA209282D1 /* FoodView.swift */; };
 		73665822D929975F93CCB1F4 /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9959FF41C8EB6FB6F4BA0420 /* Obstacle.swift */; };
 		73FD730D3B881BF6A5722CAE /* CatSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */; };
@@ -50,11 +54,13 @@
 		D3077CF55BA323FE34A738B0 /* GreedyBlackCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */; };
 		D83161D0BBCD5FAC9B5E6CCC /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E85641C6D3F53D7E30431 /* TouchControls.swift */; };
 		DDC07698414003BD417AD68A /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF8E4569AE0F39435F85FE5 /* GameView.swift */; };
+		E1B86F6F73D2582283D05448 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FAB072594A321DAA10A907 /* Achievement.swift */; };
 		E3ECEED769BCE6577CC90BBA /* ScorePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143E13B7D3BB64CDFAF676A8 /* ScorePopupView.swift */; };
 		E405694AEAE2AC411B18B886 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079012297137FC058B857E9C /* SettingsView.swift */; };
 		ED60A7847C0E904A71B82AF7 /* AdaptiveSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */; };
 		F1C1F7EB0D2680FCB1F62F70 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F99624369F973C8ABA6B614 /* GameOverView.swift */; };
 		F382C0CAFDC175EBF1DC992B /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256FDB40B3B77E72C4B5E1AF /* GameState.swift */; };
+		F403C70F58ADFD05AC52A426 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4669B2045BDD6FDAF2E0EFA7 /* AchievementsView.swift */; };
 		F488030A9F44EF79BDD74B92 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */; };
 		F52A4DD3D48566582AEA96BF /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
 		F59A6268D89C1FDABED49AB8 /* CatSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */; };
@@ -89,6 +95,8 @@
 		1F99624369F973C8ABA6B614 /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
 		248DAB3B8DF2A1BF6F9A2111 /* PowerUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerUpView.swift; sourceTree = "<group>"; };
 		256FDB40B3B77E72C4B5E1AF /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		34FAB072594A321DAA10A907 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
+		4669B2045BDD6FDAF2E0EFA7 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
 		4D2F0B53D6A9B8A116B0F999 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
 		4F7DB2355FF857815500500E /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		4FD445308D0F21357D657D9E /* GameSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettings.swift; sourceTree = "<group>"; };
@@ -100,6 +108,7 @@
 		7502887DC09AA1F649050266 /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		7610C3E3C2B9FA5C08520890 /* ScorePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorePopup.swift; sourceTree = "<group>"; };
 		7D126A6464B29C76FA0F4411 /* GreedyBlackCatTests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GreedyBlackCatTests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		874B41F4233BAAA6D04B8896 /* CatEmotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatEmotion.swift; sourceTree = "<group>"; };
 		894B1972D447B36FD52C0EB6 /* GreedyBlackCatTests iOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "GreedyBlackCatTests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CF8E4569AE0F39435F85FE5 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		9959FF41C8EB6FB6F4BA0420 /* Obstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obstacle.swift; sourceTree = "<group>"; };
@@ -207,6 +216,7 @@
 			isa = PBXGroup;
 			children = (
 				D39D5D28B2210DA953FEFE2C /* AboutView.swift */,
+				4669B2045BDD6FDAF2E0EFA7 /* AchievementsView.swift */,
 				1F99624369F973C8ABA6B614 /* GameOverView.swift */,
 				8CF8E4569AE0F39435F85FE5 /* GameView.swift */,
 				0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */,
@@ -226,8 +236,10 @@
 		C2382984C44E63327F834D97 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				34FAB072594A321DAA10A907 /* Achievement.swift */,
 				50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */,
 				06169E0B76B6724D9A497F2E /* Cat.swift */,
+				874B41F4233BAAA6D04B8896 /* CatEmotion.swift */,
 				4F7DB2355FF857815500500E /* Direction.swift */,
 				4D2F0B53D6A9B8A116B0F999 /* Food.swift */,
 				7502887DC09AA1F649050266 /* GameMode.swift */,
@@ -374,8 +386,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE71EFE1EAFB9D4105E49F8E /* AboutView.swift in Sources */,
+				E1B86F6F73D2582283D05448 /* Achievement.swift in Sources */,
+				65CC0E7DA92CD6F065DF1B66 /* AchievementsView.swift in Sources */,
 				D26A4C01C24B2B9B3CD4BB63 /* AdaptiveSettings.swift in Sources */,
 				470EAC650F91FB86087F6B86 /* Cat.swift in Sources */,
+				273C6ED62F05B3C9F69A4833 /* CatEmotion.swift in Sources */,
 				73FD730D3B881BF6A5722CAE /* CatSegmentView.swift in Sources */,
 				798C8680B0EC67A2440AAF88 /* Direction.swift in Sources */,
 				076B08EDBF50334A40F40DA6 /* Food.swift in Sources */,
@@ -422,8 +437,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				01FAC3FB874820455D6F97A1 /* AboutView.swift in Sources */,
+				042D822A35F825343E6B9B34 /* Achievement.swift in Sources */,
+				F403C70F58ADFD05AC52A426 /* AchievementsView.swift in Sources */,
 				ED60A7847C0E904A71B82AF7 /* AdaptiveSettings.swift in Sources */,
 				5415C8271BC8EAA01C018B88 /* Cat.swift in Sources */,
+				68CC3DDCC7260F7A334D9036 /* CatEmotion.swift in Sources */,
 				F59A6268D89C1FDABED49AB8 /* CatSegmentView.swift in Sources */,
 				9A66F70EDB50E6C681D95008 /* Direction.swift in Sources */,
 				368BCCC8686BE9750F44693E /* Food.swift in Sources */,

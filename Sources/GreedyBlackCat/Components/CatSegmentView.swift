@@ -4,10 +4,25 @@ struct CatSegmentView: View {
     let isHead: Bool
     let direction: Direction
     let cellSize: CGFloat
+    var comboCount: Int = 0
+    var isInvincible: Bool = false
 
     @State private var mouthScale: CGFloat = 1.0
     @State private var appearScale: CGFloat = 0.0
     @State private var isGlowing = false
+    @State private var eyePulse: CGFloat = 1.0
+
+    private var emotion: CatEmotion {
+        if isInvincible {
+            return .excited
+        }
+        switch comboCount {
+        case 0...1: return .focused
+        case 2...3: return .happy
+        case 4...: return .excited
+        default: return .surprised
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -42,9 +57,23 @@ struct CatSegmentView: View {
     // MARK: - Cat Head
     private var catHeadView: some View {
         ZStack {
-            // Main head shape
-            RoundedRectangle(cornerRadius: cellSize * 0.3)
-                .fill(Color(hex: "1A1A1A"))
+            // Main head shape with invincibility glow
+            Group {
+                RoundedRectangle(cornerRadius: cellSize * 0.3)
+                    .fill(Color(hex: "1A1A1A"))
+
+                if isInvincible {
+                    RoundedRectangle(cornerRadius: cellSize * 0.3)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.purple.opacity(0.3), Color.clear],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .blur(radius: 8)
+                }
+            }
 
             // Ears
             HStack(spacing: cellSize * 0.5) {
@@ -53,12 +82,13 @@ struct CatSegmentView: View {
             }
             .offset(y: -cellSize * 0.15)
 
-            // Eyes
+            // Eyes with emotion
             HStack(spacing: cellSize * 0.15) {
                 eyeView
                 eyeView
             }
             .offset(y: -cellSize * 0.05)
+            .scaleEffect(emotion.eyeScale)
 
             // Nose
             Triangle()
@@ -66,28 +96,19 @@ struct CatSegmentView: View {
                 .frame(width: cellSize * 0.15, height: cellSize * 0.12)
                 .offset(y: cellSize * 0.08)
 
-            // Mouth (slight smile with animation)
+            // Mouth with emotion-based animation
             Path { path in
                 path.move(to: CGPoint(x: 0, y: 0))
                 path.addQuadCurve(
                     to: CGPoint(x: 1, y: 0),
-                    control: CGPoint(x: 0.5, y: 1 * mouthScale)
+                    control: CGPoint(x: 0.5, y: emotion.mouthPath.0 * emotion.mouthPath.1)
                 )
             }
             .stroke(Color(hex: "333333"), lineWidth: cellSize * 0.03)
             .frame(width: cellSize * 0.3, height: cellSize * 0.1)
             .offset(y: cellSize * 0.15)
-            .onAppear {
-                // Gentle mouth animation
-                withAnimation(
-                    Animation.easeInOut(duration: 0.8)
-                        .repeatForever(autoreverses: true)
-                ) {
-                    mouthScale = 0.6
-                }
-            }
 
-            // Whiskers
+            // Whiskers with emotion angle
             whiskersView
         }
         .rotationEffect(headRotation)
@@ -132,16 +153,20 @@ struct CatSegmentView: View {
             // Left whiskers
             VStack(spacing: cellSize * 0.05) {
                 whiskerLine
+                    .rotationEffect(.degrees(-emotion.whiskerAngle))
                 whiskerLine
                 whiskerLine
+                    .rotationEffect(.degrees(emotion.whiskerAngle))
             }
             .offset(x: -cellSize * 0.25, y: cellSize * 0.05)
 
             // Right whiskers
             VStack(spacing: cellSize * 0.05) {
                 whiskerLine
+                    .rotationEffect(.degrees(emotion.whiskerAngle))
                 whiskerLine
                 whiskerLine
+                    .rotationEffect(.degrees(-emotion.whiskerAngle))
             }
             .offset(x: cellSize * 0.25, y: cellSize * 0.05)
         }

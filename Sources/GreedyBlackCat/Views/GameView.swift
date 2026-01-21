@@ -227,7 +227,9 @@ struct GameView: View {
                     CatSegmentView(
                         isHead: index == 0,
                         direction: viewModel.cat.direction,
-                        cellSize: cellSize
+                        cellSize: cellSize,
+                        comboCount: viewModel.comboCount,
+                        isInvincible: viewModel.isInvincible
                     )
                     .position(
                         x: CGFloat(position.x) * cellSize + cellSize / 2,

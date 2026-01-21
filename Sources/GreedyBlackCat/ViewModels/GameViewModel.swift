@@ -474,12 +474,25 @@ class GameViewModel: ObservableObject {
 
     private func gameOver() {
         stopGameLoop()
+        stopTimeTimer()
         gameState = .gameOver
 
         if score > highScore {
             highScore = score
-            Self.saveHighScore(highScore)
+            Self.saveHighScore(highScore, for: gameMode)
         }
+
+        // Update achievements
+        var stats = GameStats.load()
+        stats.updateFromGame(
+            score: score,
+            foodEaten: foodEaten,
+            powerUpsCollected: powerUpsCollected,
+            dashesUsed: dashesUsed,
+            comboCount: comboCount,
+            length: cat.body.count,
+            gameMode: gameMode
+        )
     }
 
     // MARK: - Input Handling
