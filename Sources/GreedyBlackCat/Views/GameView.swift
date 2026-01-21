@@ -87,6 +87,14 @@ struct GameView: View {
                     flashIntensity: viewModel.screenFlashIntensity
                 )
             }
+
+            // Border glow effect for special events
+            if viewModel.comboCount >= 3 || viewModel.isInvincible || viewModel.isTimeRunningOut {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(borderGlowColor, lineWidth: borderGlowWidth)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
         }
         #if os(iOS)
         .navigationBarHidden(true)
@@ -272,12 +280,15 @@ struct GameView: View {
                     )
                 }
 
-                // Ghost trail effect
+                // Ghost trail effect with fire color during high combos
                 ForEach(viewModel.trailPoints) { trailPoint in
+                    let trailColor: Color = viewModel.comboCount >= 3 ? .orange : Color.accentColor
+                    let trailAlpha = trailPoint.alpha * (viewModel.comboCount >= 3 ? 0.5 : 0.3)
+
                     Circle()
-                        .fill(Color.accentColor.opacity(trailPoint.alpha * 0.3))
+                        .fill(trailColor.opacity(trailAlpha))
                         .frame(width: cellSize * 0.6, height: cellSize * 0.6)
-                        .blur(radius: 4)
+                        .blur(radius: viewModel.comboCount >= 3 ? 6 : 4)
                         .position(
                             x: CGFloat(trailPoint.position.x) * cellSize + cellSize / 2,
                             y: CGFloat(trailPoint.position.y) * cellSize + cellSize / 2
@@ -651,6 +662,30 @@ private extension GameView {
         case 21...30: return Color.yellow.opacity(0.3)
         default: return Color.black.opacity(0.05)
         }
+    }
+
+    var borderGlowColor: Color {
+        if viewModel.isInvincible {
+            return .purple
+        } else if viewModel.isTimeRunningOut {
+            return .red
+        } else if viewModel.comboCount >= 5 {
+            return .yellow
+        } else if viewModel.comboCount >= 3 {
+            return .orange
+        }
+        return .clear
+    }
+
+    var borderGlowWidth: CGFloat {
+        if viewModel.isInvincible {
+            return 4
+        } else if viewModel.isTimeRunningOut {
+            return 3
+        } else if viewModel.comboCount >= 3 {
+            return CGFloat(viewModel.comboCount)
+        }
+        return 0
     }
 }
 
