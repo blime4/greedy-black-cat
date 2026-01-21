@@ -26,6 +26,9 @@ class GameViewModel: ObservableObject {
     @Published var powerUpsCollected: Int = 0
     @Published var dashesUsed: Int = 0
     @Published var trailPoints: [TrailPoint] = []
+    @Published var screenFlashIntensity: Double = 0
+    @Published var showingAchievement: Bool = false
+    @Published var achievementUnlocked: String = ""
 
     // MARK: - Trail System
     private var trailSystem = TrailSystem()
@@ -261,6 +264,19 @@ class GameViewModel: ObservableObject {
             screenShake = max(0, screenShake - 1)
         }
 
+        // Decay screen flash
+        if screenFlashIntensity > 0 {
+            screenFlashIntensity = max(0, screenFlashIntensity - 0.1)
+        }
+
+        // Hide achievement popup after delay
+        if showingAchievement {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                showingAchievement = false
+            }
+        }
+
         // Spawn obstacles as difficulty increases
         spawnObstaclesIfNeeded()
     }
@@ -312,9 +328,13 @@ class GameViewModel: ObservableObject {
         let points = currentFood.points * comboMultiplier
         score += points
 
-        // Screen flash on combo milestones
+        // Screen flash and shake on combo milestones
         if comboCount == 3 || comboCount == 5 {
             screenShake = CGFloat(comboCount)
+            screenFlashIntensity = comboCount == 5 ? 0.5 : 0.3
+            #if os(iOS)
+            HapticFeedback.medium()
+            #endif
         }
 
         // Spawn particles
@@ -337,6 +357,35 @@ class GameViewModel: ObservableObject {
 
         // Increase speed gradually
         increaseSpeed()
+
+        // Check for growth milestone (every 5 segments)
+        let catLength = cat.body.count
+        if catLength > 3 && catLength % 5 == 0 {
+            celebrateLevelUp(at: position)
+        }
+    }
+
+    private func celebrateLevelUp(at position: Position) {
+        // Big screen flash
+        screenFlashIntensity = 0.6
+
+        // Extra screen shake
+        screenShake = 8
+
+        // Haptic feedback
+        #if os(iOS)
+        HapticFeedback.success()
+        #endif
+
+        // Spawn celebration particles in multiple colors
+        let celebrationColors: [Color] = [.yellow, .orange, .pink, .purple, .cyan]
+        for color in celebrationColors {
+            spawnParticles(at: position, color: color, count: 6)
+        }
+
+        // Show achievement popup
+        showingAchievement = true
+        achievementUnlocked = "Growth: \(cat.body.count)!"
     }
 
     private func spawnParticles(at position: Position, color: Color, count: Int) {
@@ -429,6 +478,11 @@ class GameViewModel: ObservableObject {
         // Spawn particles at dash end
         spawnParticles(at: cat.head, color: .cyan, count: 12)
         screenShake = 5
+        screenFlashIntensity = 0.3
+
+        #if os(iOS)
+        HapticFeedback.medium()
+        #endif
 
         // End dash after brief moment
         Task { @MainActor in
@@ -462,6 +516,10 @@ class GameViewModel: ObservableObject {
     private func collectPowerUp(_ powerUp: PowerUp) {
         powerUpsCollected += 1
 
+        #if os(iOS)
+        HapticFeedback.success()
+        #endif
+
         let activePowerUp = ActivePowerUp(type: powerUp.type, duration: powerUp.type.duration)
         activePowerUps.append(activePowerUp)
 
@@ -483,6 +541,9 @@ class GameViewModel: ObservableObject {
 
         // Spawn particles for power-up collection
         spawnParticles(at: powerUp.position, color: powerUp.type.color, count: 15)
+
+        // Screen flash for power-up collection
+        screenFlashIntensity = 0.4
     }
 
     private func updatePowerUps() {
@@ -523,9 +584,16 @@ class GameViewModel: ObservableObject {
         stopTimeTimer()
         gameState = .gameOver
 
+        #if os(iOS)
+        HapticFeedback.error()
+        #endif
+
         if score > highScore {
             highScore = score
             Self.saveHighScore(highScore, for: gameMode)
+            #if os(iOS)
+            HapticFeedback.success()
+            #endif
         }
 
         // Update achievements

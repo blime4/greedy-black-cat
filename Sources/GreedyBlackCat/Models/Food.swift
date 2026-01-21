@@ -1,6 +1,6 @@
 import Foundation
 
-struct Food: Equatable {
+struct Food: Equatable, Identifiable {
     enum FoodType {
         case smallFish   // 10 points
         case mediumFish  // 20 points
@@ -28,6 +28,7 @@ struct Food: Equatable {
 
     let position: Position
     let type: FoodType
+    let id = UUID()
 
     init(position: Position, type: FoodType = .random()) {
         self.position = position

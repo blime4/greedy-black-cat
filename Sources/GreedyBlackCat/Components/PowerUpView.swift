@@ -5,6 +5,7 @@ struct PowerUpView: View {
     let cellSize: CGFloat
 
     @State private var pulseScale: CGFloat = 1.0
+    @State private var spawnScale: CGFloat = 0.0
 
     var body: some View {
         ZStack {
@@ -24,12 +25,16 @@ struct PowerUpView: View {
             Text(powerUp.type.icon)
                 .font(.system(size: cellSize * 0.3))
         }
+        .scaleEffect(spawnScale)
         .onAppear {
             withAnimation(
                 Animation.easeInOut(duration: 1.0)
                     .repeatForever(autoreverses: true)
             ) {
                 pulseScale = 1.2
+            }
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                spawnScale = 1.0
             }
         }
     }

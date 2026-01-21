@@ -8,6 +8,7 @@ struct FoodView: View {
     @State private var isFloating = false
     @State private var glowScale: CGFloat = 1.0
     @State private var isMagnetic = false
+    @State private var spawnScale: CGFloat = 0.0
 
     init(food: Food, cellSize: CGFloat, catHead: Position? = nil) {
         self.food = food
@@ -63,6 +64,7 @@ struct FoodView: View {
                 .rotationEffect(.degrees(-90))
         }
         .rotationEffect(.degrees(-90))
+        .scaleEffect(spawnScale)
         .shadow(color: fishColor.opacity(0.4), radius: 4, x: 0, y: 2)
         // Floating animation - bob up and down
         .offset(y: isFloating ? -cellSize * 0.05 : cellSize * 0.05)
@@ -82,9 +84,12 @@ struct FoodView: View {
                 .repeatForever(autoreverses: false),
             value: isMagnetic
         )
+        // Spawn pop-in animation
+        .animation(.spring(response: 0.4, dampingFraction: 0.6), value: spawnScale)
         .onAppear {
             isFloating = true
             glowScale = 0.9
+            spawnScale = 1.0
             updateMagneticState()
         }
         .onChange(of: catHead) { _ in

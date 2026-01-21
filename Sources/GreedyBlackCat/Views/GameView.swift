@@ -62,6 +62,16 @@ struct GameView: View {
             if viewModel.gameState.isPaused || showingPauseMenu {
                 pauseMenuOverlay
             }
+
+            // Screen flash and achievement overlay
+            if viewModel.screenFlashIntensity > 0 || viewModel.showingAchievement {
+                GameOverlayView(
+                    showAchievement: viewModel.showingAchievement,
+                    achievementName: viewModel.achievementUnlocked,
+                    achievementIcon: "🏆",
+                    flashIntensity: viewModel.screenFlashIntensity
+                )
+            }
         }
         #if os(iOS)
         .navigationBarHidden(true)
@@ -198,6 +208,7 @@ struct GameView: View {
                 // Food
                 if let food = viewModel.food {
                     FoodView(food: food, cellSize: cellSize, catHead: viewModel.cat.head)
+                        .id(food.id)
                         .position(
                             x: CGFloat(food.position.x) * cellSize + cellSize / 2,
                             y: CGFloat(food.position.y) * cellSize + cellSize / 2

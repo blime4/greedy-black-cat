@@ -5,6 +5,7 @@ struct ObstacleView: View {
     let cellSize: CGFloat
 
     @State private var rotation: Double = 0
+    @State private var spawnScale: CGFloat = 0.0
 
     var body: some View {
         ZStack {
@@ -19,7 +20,11 @@ struct ObstacleView: View {
                 .font(.system(size: cellSize * 0.4))
         }
         .rotationEffect(.degrees(rotation))
+        .scaleEffect(spawnScale)
         .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                spawnScale = 1.0
+            }
             switch obstacle.type {
             case .ice:
                 withAnimation(.linear(duration: 4.0).repeatForever(autoreverses: false)) {
