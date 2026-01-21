@@ -7,6 +7,8 @@ struct MainMenuView: View {
     @State private var showingSettings = false
     @State private var showingAchievements = false
     @State private var gameViewModel: GameViewModel?
+    @State private var isCatBouncing = false
+    @State private var isMenuVisible = false
 
     var body: some View {
         NavigationView {
@@ -31,6 +33,15 @@ struct MainMenuView: View {
                         VStack(spacing: 16) {
                             Text("🐱")
                                 .font(.system(size: 80))
+                                .offset(y: isCatBouncing ? -10 : 0)
+                                .animation(
+                                    Animation.easeInOut(duration: 1.2)
+                                        .repeatForever(autoreverses: true),
+                                    value: isCatBouncing
+                                )
+                                .onAppear {
+                                    isCatBouncing = true
+                                }
                             Text("贪吃的黑猫")
                                 .font(.system(size: 48, weight: .bold))
                                 .foregroundColor(Color(hex: "1A1A1A"))
@@ -119,6 +130,12 @@ struct MainMenuView: View {
                         }
 
                         Spacer()
+                    }
+                    .opacity(isMenuVisible ? 1 : 0)
+                    .offset(y: isMenuVisible ? 0 : 20)
+                    .animation(.easeOut(duration: 0.6).delay(0.2), value: isMenuVisible)
+                    .onAppear {
+                        isMenuVisible = true
                     }
                 }
             }
