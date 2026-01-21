@@ -17,6 +17,7 @@ class GameViewModel: ObservableObject {
     @Published var comboCount: Int = 0
     @Published var settings: GameSettings
     @Published var scorePopups: [ScorePopup] = []
+    @Published var hitEffects: [HitEffect] = []
     @Published var screenShake: CGFloat = 0
     @Published var canDash: Bool = true
     @Published var isDashing: Bool = false
@@ -29,6 +30,8 @@ class GameViewModel: ObservableObject {
     @Published var screenFlashIntensity: Double = 0
     @Published var showingAchievement: Bool = false
     @Published var achievementUnlocked: String = ""
+    @Published var showComboPopup: Bool = false
+    @Published var comboMultiplier: Int = 1
 
     // MARK: - Trail System
     private var trailSystem = TrailSystem()
@@ -335,17 +338,34 @@ class GameViewModel: ObservableObject {
             #if os(iOS)
             HapticFeedback.medium()
             #endif
+
+            // Show combo popup
+            self.comboMultiplier = comboCount
+            showComboPopup = true
+
+            // Hide popup after animation
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                showComboPopup = false
+            }
         }
 
         // Spawn particles
         spawnParticles(at: position, color: currentFood.type.color, count: 8)
 
+        // Add hit effect
+        hitEffects.append(HitEffect(
+            position: CGPoint(x: position.x, y: position.y),
+            color: currentFood.type.color
+        ))
+
         // Add score popup at food position
         let popup = ScorePopup(points: points, position: currentFood.position)
         scorePopups.append(popup)
 
-        // Clean up old popups
+        // Clean up old popups and hit effects
         scorePopups.removeAll { $0.isExpired }
+        hitEffects.removeAll { $0.isExpired }
 
         // Generate new food
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
@@ -541,6 +561,12 @@ class GameViewModel: ObservableObject {
 
         // Spawn particles for power-up collection
         spawnParticles(at: powerUp.position, color: powerUp.type.color, count: 15)
+
+        // Add hit effect for power-up
+        hitEffects.append(HitEffect(
+            position: CGPoint(x: powerUp.position.x, y: powerUp.position.y),
+            color: powerUp.type.color
+        ))
 
         // Screen flash for power-up collection
         screenFlashIntensity = 0.4

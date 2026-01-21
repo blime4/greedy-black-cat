@@ -13,13 +13,15 @@ struct GameView: View {
 
     var body: some View {
         ZStack {
-            // Background
+            // Background with ambient animation
             #if os(macOS)
             Color(NSColor.windowBackgroundColor)
                 .ignoresSafeArea()
+                .overlay(AnimatedBackgroundView())
             #else
             Color(.systemBackground)
                 .ignoresSafeArea()
+                .overlay(AnimatedBackgroundView())
             #endif
 
             VStack(spacing: 0) {
@@ -56,6 +58,12 @@ struct GameView: View {
                     .padding(.trailing)
                     .padding(.bottom, 100)
                     .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+
+            // Combo Multiplier Popup
+            if viewModel.showComboPopup {
+                ComboMultiplierPopup(multiplier: viewModel.comboMultiplier)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
 
             // Pause Menu Overlay
@@ -278,6 +286,21 @@ struct GameView: View {
 
                 // Particles
                 ParticleSystemView(particles: viewModel.particles, cellSize: cellSize)
+
+                // Speed lines during dash
+                SpeedLinesView(
+                    isDashing: viewModel.isDashing,
+                    direction: viewModel.cat.direction,
+                    gridSize: gridSize
+                )
+
+                // Hit effects (ripple/shockwave)
+                ForEach(viewModel.hitEffects) { effect in
+                    ShockwaveView(position: CGPoint(
+                        x: effect.position.x * cellSize + cellSize / 2,
+                        y: effect.position.y * cellSize + cellSize / 2
+                    ), color: effect.color)
+                }
             }
             .frame(width: gridSize, height: gridSize)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
