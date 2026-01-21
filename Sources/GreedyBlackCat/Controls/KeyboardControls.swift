@@ -27,11 +27,12 @@ struct KeyboardControls: ViewModifier {
                     return .handled
                 case .space:
                     if viewModel.gameState.isPlaying {
-                        viewModel.pauseGame()
+                        viewModel.performDash()
+                        return .handled
                     } else if viewModel.gameState.isPaused {
                         viewModel.resumeGame()
+                        return .handled
                     }
-                    return .handled
                 case .escape:
                     if viewModel.gameState.isPlaying {
                         viewModel.pauseGame()
@@ -44,11 +45,14 @@ struct KeyboardControls: ViewModifier {
                         viewModel.restartGame()
                     }
                     return .handled
+                case .tab, .carriageReturn:
+                    viewModel.performDash()
+                    return .handled
                 default:
                     break
                 }
 
-                // 检查字母键 (WASD)
+                // 检查字母键 (WASD) + Shift for dash
                 let chars = keyPress.characters.lowercased()
                 if chars == "w" {
                     viewModel.changeDirection(.up)
@@ -61,6 +65,9 @@ struct KeyboardControls: ViewModifier {
                     return .handled
                 } else if chars == "d" {
                     viewModel.changeDirection(.right)
+                    return .handled
+                } else if chars == " " {
+                    viewModel.performDash()
                     return .handled
                 }
 

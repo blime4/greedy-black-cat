@@ -10,16 +10,24 @@ class GameViewModel: ObservableObject {
     @Published var food: Food?
     @Published var powerUps: [PowerUp] = []
     @Published var activePowerUps: [ActivePowerUp] = []
+    @Published var obstacles: [Obstacle] = []
+    @Published var particles: [Particle] = []
     @Published var score: Int = 0
     @Published var highScore: Int = 0
     @Published var comboCount: Int = 0
     @Published var settings: GameSettings
     @Published var scorePopups: [ScorePopup] = []
     @Published var screenShake: CGFloat = 0
+    @Published var canDash: Bool = true
+    @Published var isDashing: Bool = false
 
     // MARK: - Combo System
     private var lastEatTime: Date?
     private let comboWindow: TimeInterval = 2.0
+
+    // MARK: - Dash System
+    private var dashCooldown: TimeInterval = 0
+    private let dashCooldownTime: TimeInterval = 3.0
 
     // MARK: - Timer
     private var gameTimer: Timer?
@@ -95,7 +103,12 @@ class GameViewModel: ObservableObject {
         scorePopups = []
         powerUps = []
         activePowerUps = []
+        obstacles = []
+        particles = []
         screenShake = 0
+        canDash = true
+        isDashing = false
+        dashCooldown = 0
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
     }
 
@@ -120,6 +133,12 @@ class GameViewModel: ObservableObject {
         // Update power-ups
         updatePowerUps()
 
+        // Update particles
+        updateParticles()
+
+        // Update dash cooldown
+        updateDashCooldown()
+
         // Process input queue
         if !inputQueue.isEmpty {
             let newDirection = inputQueue.removeFirst()
@@ -131,6 +150,12 @@ class GameViewModel: ObservableObject {
 
         // Check wall collision (unless invincible)
         if !isInvincible && !newPosition.isInBounds(width: gridWidth, height: gridHeight) {
+            gameOver()
+            return
+        }
+
+        // Check obstacle collision
+        if !isInvincible && obstacles.contains(where: { $0.position == newPosition }) {
             gameOver()
             return
         }
@@ -151,7 +176,7 @@ class GameViewModel: ObservableObject {
         cat.move(to: newPosition, grow: ateFood)
 
         if ateFood {
-            handleFoodEaten()
+            handleFoodEaten(at: newPosition)
         }
 
         // Check power-up collision
@@ -169,9 +194,12 @@ class GameViewModel: ObservableObject {
         if screenShake > 0 {
             screenShake = max(0, screenShake - 1)
         }
+
+        // Spawn obstacles as difficulty increases
+        spawnObstaclesIfNeeded()
     }
 
-    private func handleFoodEaten() {
+    private func handleFoodEaten(at position: Position) {
         guard let currentFood = food else { return }
 
         // Handle combo system
@@ -187,6 +215,9 @@ class GameViewModel: ObservableObject {
         let comboMultiplier = min(comboCount, 5) // Max 5x multiplier
         let points = currentFood.points * comboMultiplier
         score += points
+
+        // Spawn particles
+        spawnParticles(at: position, color: currentFood.type.color, count: 8)
 
         // Add score popup at food position
         let popup = ScorePopup(points: points, position: currentFood.position)
@@ -207,6 +238,100 @@ class GameViewModel: ObservableObject {
         increaseSpeed()
     }
 
+    private func spawnParticles(at position: Position, color: Color, count: Int) {
+        for _ in 0..<count {
+            let angle = Double.random(in: 0...(2 * .pi))
+            let speed = Double.random(in: 0.5...2.0)
+            let particle = Particle(
+                position: CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)),
+                velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
+                color: color,
+                size: CGFloat.random(in: 0.05...0.15),
+                life: 0,
+                maxLife: Double.random(in: 0.3...0.6)
+            )
+            particles.append(particle)
+        }
+    }
+
+    private func updateParticles() {
+        for i in particles.indices {
+            particles[i].life += currentSpeed
+            particles[i].position.x += particles[i].velocity.dx * CGFloat(currentSpeed)
+            particles[i].position.y += particles[i].velocity.dy * CGFloat(currentSpeed)
+        }
+        particles.removeAll { $0.isDead }
+    }
+
+    private func spawnObstaclesIfNeeded() {
+        // Spawn obstacles every 50 points, max 5 obstacles
+        let obstacleCount = score / 50
+        let targetObstacles = min(obstacleCount, 5)
+
+        if obstacles.count < targetObstacles {
+            spawnObstacle()
+        }
+    }
+
+    private func spawnObstacle() {
+        let types: [ObstacleType] = [.rock, .spike, .ice]
+        guard let type = types.randomElement() else { return }
+
+        var validPositions: [Position] = []
+        for x in 0..<gridWidth {
+            for y in 0..<gridHeight {
+                let pos = Position(x: x, y: y)
+                let centerSafeZone = abs(x - gridWidth / 2) < 3 && abs(y - gridHeight / 2) < 3
+                if !cat.body.contains(pos) &&
+                   pos != food?.position &&
+                   !obstacles.contains(where: { $0.position == pos }) &&
+                   !centerSafeZone {
+                    validPositions.append(pos)
+                }
+            }
+        }
+
+        if let position = validPositions.randomElement() {
+            obstacles.append(Obstacle(type: type, position: position))
+        }
+    }
+
+    private func updateDashCooldown() {
+        if dashCooldown > 0 {
+            dashCooldown -= currentSpeed
+            if dashCooldown <= 0 {
+                canDash = true
+            }
+        }
+    }
+
+    func performDash() {
+        guard canDash && !isDashing && gameState == .playing else { return }
+
+        isDashing = true
+        canDash = false
+        dashCooldown = dashCooldownTime
+
+        // Move 3 spaces instantly in current direction
+        for _ in 0..<3 {
+            let newPosition = cat.head.applying(cat.direction.offset)
+            if newPosition.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == newPosition }) {
+                cat.move(to: newPosition, grow: false)
+            }
+        }
+
+        // Spawn particles at dash end
+        spawnParticles(at: cat.head, color: .cyan, count: 12)
+        screenShake = 5
+
+        // End dash after brief moment
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+            isDashing = false
+        }
+    }
+
     private func spawnPowerUp() {
         let availableTypes = PowerUpType.allCases
         guard let type = availableTypes.randomElement() else { return }
@@ -215,7 +340,10 @@ class GameViewModel: ObservableObject {
         for x in 0..<gridWidth {
             for y in 0..<gridHeight {
                 let pos = Position(x: x, y: y)
-                if !cat.body.contains(pos) && pos != food?.position {
+                if !cat.body.contains(pos) &&
+                   pos != food?.position &&
+                   !obstacles.contains(where: { $0.position == pos }) &&
+                   !powerUps.contains(where: { $0.position == pos }) {
                     validPositions.append(pos)
                 }
             }

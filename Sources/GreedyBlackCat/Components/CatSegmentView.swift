@@ -7,6 +7,7 @@ struct CatSegmentView: View {
 
     @State private var mouthScale: CGFloat = 1.0
     @State private var appearScale: CGFloat = 0.0
+    @State private var isGlowing = false
 
     var body: some View {
         ZStack {
@@ -15,12 +16,26 @@ struct CatSegmentView: View {
             } else {
                 catBodyView
             }
+
+            // Subtle glow effect for body segments
+            if !isHead {
+                Circle()
+                    .fill(Color.accentColor.opacity(isGlowing ? 0.1 : 0.05))
+                    .frame(width: cellSize, height: cellSize)
+                    .blur(radius: 5)
+            }
         }
         .frame(width: cellSize * 0.9, height: cellSize * 0.9)
         .scaleEffect(appearScale)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: appearScale)
+        .animation(
+            Animation.easeInOut(duration: 1.5)
+                .repeatForever(autoreverses: true),
+            value: isGlowing
+        )
         .onAppear {
             appearScale = 1.0
+            isGlowing = true
         }
     }
 

@@ -26,6 +26,7 @@
 		5A85BA01AF59213C81090CE9 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
 		688D31EC69E34DEF56874662 /* KeyboardControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38662805A9C16C22E03A08B /* KeyboardControls.swift */; };
 		6C1A3E021E4E46B79A357FBA /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0E5E3B8830D5EA209282D1 /* FoodView.swift */; };
+		73665822D929975F93CCB1F4 /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9959FF41C8EB6FB6F4BA0420 /* Obstacle.swift */; };
 		73FD730D3B881BF6A5722CAE /* CatSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */; };
 		7604B0C613A2389B6AB4032F /* PowerUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248DAB3B8DF2A1BF6F9A2111 /* PowerUpView.swift */; };
 		798C8680B0EC67A2440AAF88 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7DB2355FF857815500500E /* Direction.swift */; };
@@ -34,11 +35,15 @@
 		95F4BA5A8CB59279857FAE45 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079012297137FC058B857E9C /* SettingsView.swift */; };
 		9983C1CF66F1B301C0A4C477 /* PowerUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A355C5AADB8BFC60593B12E1 /* PowerUp.swift */; };
 		9A66F70EDB50E6C681D95008 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7DB2355FF857815500500E /* Direction.swift */; };
+		9B4CC18F9A5F97E01D22A0E8 /* ObstacleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E26CA68EDD6B51573F5D74F /* ObstacleView.swift */; };
 		9D800E6E5081D9F31DE249D4 /* ScorePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143E13B7D3BB64CDFAF676A8 /* ScorePopupView.swift */; };
 		AE71EFE1EAFB9D4105E49F8E /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D5D28B2210DA953FEFE2C /* AboutView.swift */; };
+		B180A26FD4BAD8EA580F730A /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA9CD4FFE5139323A5038BF /* ParticleView.swift */; };
 		B54F18EDCE748740DF3F8B20 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24790CC4365BFFC4BCD6EB5 /* Position.swift */; };
 		BA928630CA52E0297DE5B7D0 /* KeyboardControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38662805A9C16C22E03A08B /* KeyboardControls.swift */; };
+		C903D5B91F95FBDCBD288A98 /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA9CD4FFE5139323A5038BF /* ParticleView.swift */; };
 		D153D2B1BEC10BB2626C491A /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECD14BC44D89E57BDB2FA18 /* MainMenuView.swift */; };
+		D1C8400D2020E0D457F9C8A3 /* ObstacleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E26CA68EDD6B51573F5D74F /* ObstacleView.swift */; };
 		D26A4C01C24B2B9B3CD4BB63 /* AdaptiveSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */; };
 		D3077CF55BA323FE34A738B0 /* GreedyBlackCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */; };
 		D83161D0BBCD5FAC9B5E6CCC /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2E85641C6D3F53D7E30431 /* TouchControls.swift */; };
@@ -52,6 +57,7 @@
 		F52A4DD3D48566582AEA96BF /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD445308D0F21357D657D9E /* GameSettings.swift */; };
 		F59A6268D89C1FDABED49AB8 /* CatSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */; };
 		FA6F15F3745E648E64AD79EA /* GameButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA097A765CAA4DE2A0E7B6B /* GameButtonStyle.swift */; };
+		FA8FB3173ACFEB7BE8BE7C07 /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9959FF41C8EB6FB6F4BA0420 /* Obstacle.swift */; };
 		FAED9115CE11D5AD81893A04 /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0E5E3B8830D5EA209282D1 /* FoodView.swift */; };
 /* End PBXBuildFile section */
 
@@ -87,10 +93,13 @@
 		50F4E17B377FAF810900C5E2 /* AdaptiveSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSettings.swift; sourceTree = "<group>"; };
 		58DEC2231942E134DB03319D /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		61FBC66EF99372ED38DD9A4A /* GreedyBlackCatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreedyBlackCatApp.swift; sourceTree = "<group>"; };
+		6AA9CD4FFE5139323A5038BF /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
+		6E26CA68EDD6B51573F5D74F /* ObstacleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObstacleView.swift; sourceTree = "<group>"; };
 		7610C3E3C2B9FA5C08520890 /* ScorePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorePopup.swift; sourceTree = "<group>"; };
 		7D126A6464B29C76FA0F4411 /* GreedyBlackCatTests macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GreedyBlackCatTests macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		894B1972D447B36FD52C0EB6 /* GreedyBlackCatTests iOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "GreedyBlackCatTests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CF8E4569AE0F39435F85FE5 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		9959FF41C8EB6FB6F4BA0420 /* Obstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obstacle.swift; sourceTree = "<group>"; };
 		A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatSegmentView.swift; sourceTree = "<group>"; };
 		A355C5AADB8BFC60593B12E1 /* PowerUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerUp.swift; sourceTree = "<group>"; };
 		A38662805A9C16C22E03A08B /* KeyboardControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardControls.swift; sourceTree = "<group>"; };
@@ -220,6 +229,7 @@
 				4D2F0B53D6A9B8A116B0F999 /* Food.swift */,
 				4FD445308D0F21357D657D9E /* GameSettings.swift */,
 				256FDB40B3B77E72C4B5E1AF /* GameState.swift */,
+				9959FF41C8EB6FB6F4BA0420 /* Obstacle.swift */,
 				B24790CC4365BFFC4BCD6EB5 /* Position.swift */,
 				A355C5AADB8BFC60593B12E1 /* PowerUp.swift */,
 				7610C3E3C2B9FA5C08520890 /* ScorePopup.swift */,
@@ -242,6 +252,8 @@
 				A18D24D36B0DC6DFAB591FAA /* CatSegmentView.swift */,
 				FA0E5E3B8830D5EA209282D1 /* FoodView.swift */,
 				BDA097A765CAA4DE2A0E7B6B /* GameButtonStyle.swift */,
+				6E26CA68EDD6B51573F5D74F /* ObstacleView.swift */,
+				6AA9CD4FFE5139323A5038BF /* ParticleView.swift */,
 				248DAB3B8DF2A1BF6F9A2111 /* PowerUpView.swift */,
 				143E13B7D3BB64CDFAF676A8 /* ScorePopupView.swift */,
 			);
@@ -373,6 +385,9 @@
 				338F8D53977F2CDBC30E4982 /* GreedyBlackCatApp.swift in Sources */,
 				BA928630CA52E0297DE5B7D0 /* KeyboardControls.swift in Sources */,
 				D153D2B1BEC10BB2626C491A /* MainMenuView.swift in Sources */,
+				FA8FB3173ACFEB7BE8BE7C07 /* Obstacle.swift in Sources */,
+				9B4CC18F9A5F97E01D22A0E8 /* ObstacleView.swift in Sources */,
+				B180A26FD4BAD8EA580F730A /* ParticleView.swift in Sources */,
 				B54F18EDCE748740DF3F8B20 /* Position.swift in Sources */,
 				9983C1CF66F1B301C0A4C477 /* PowerUp.swift in Sources */,
 				250A9764B06886EF3F065AC6 /* PowerUpView.swift in Sources */,
@@ -417,6 +432,9 @@
 				D3077CF55BA323FE34A738B0 /* GreedyBlackCatApp.swift in Sources */,
 				688D31EC69E34DEF56874662 /* KeyboardControls.swift in Sources */,
 				F488030A9F44EF79BDD74B92 /* MainMenuView.swift in Sources */,
+				73665822D929975F93CCB1F4 /* Obstacle.swift in Sources */,
+				D1C8400D2020E0D457F9C8A3 /* ObstacleView.swift in Sources */,
+				C903D5B91F95FBDCBD288A98 /* ParticleView.swift in Sources */,
 				17B8C7E9C471B420F390CAD7 /* Position.swift in Sources */,
 				90A9AFB96512618EF1227327 /* PowerUp.swift in Sources */,
 				7604B0C613A2389B6AB4032F /* PowerUpView.swift in Sources */,

@@ -195,6 +195,15 @@ struct GameView: View {
                         )
                 }
 
+                // Obstacles
+                ForEach(viewModel.obstacles) { obstacle in
+                    ObstacleView(obstacle: obstacle, cellSize: cellSize)
+                        .position(
+                            x: CGFloat(obstacle.position.x) * cellSize + cellSize / 2,
+                            y: CGFloat(obstacle.position.y) * cellSize + cellSize / 2
+                        )
+                }
+
                 // Cat body
                 ForEach(Array(viewModel.cat.body.enumerated()), id: \.offset) { index, position in
                     CatSegmentView(
@@ -223,6 +232,9 @@ struct GameView: View {
                         y: CGFloat(popup.position.y) * cellSize + cellSize / 2
                     )
                 }
+
+                // Particles
+                ParticleSystemView(particles: viewModel.particles, cellSize: cellSize)
             }
             .frame(width: gridSize, height: gridSize)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
@@ -274,43 +286,69 @@ struct GameView: View {
     // MARK: - Touch Controls
     #if os(iOS)
     private var touchControlsView: some View {
-        VStack(spacing: 16) {
-            // Up button
-            Button(action: { viewModel.changeDirection(.up) }) {
-                controlButtonArrow(systemName: "arrow.up")
+        HStack(spacing: 20) {
+            // D-pad
+            VStack(spacing: 12) {
+                // Up button
+                Button(action: { viewModel.changeDirection(.up) }) {
+                    controlButtonArrow(systemName: "arrow.up")
+                }
+                .pressEffect()
+
+                HStack(spacing: 24) {
+                    // Left button
+                    Button(action: { viewModel.changeDirection(.left) }) {
+                        controlButtonArrow(systemName: "arrow.left")
+                    }
+                    .pressEffect()
+
+                    // Down button
+                    Button(action: { viewModel.changeDirection(.down) }) {
+                        controlButtonArrow(systemName: "arrow.down")
+                    }
+                    .pressEffect()
+
+                    // Right button
+                    Button(action: { viewModel.changeDirection(.right) }) {
+                        controlButtonArrow(systemName: "arrow.right")
+                    }
+                    .pressEffect()
+                }
+            }
+            .padding()
+            .background(Color.white.opacity(0.9))
+            .cornerRadius(16)
+
+            // Dash button
+            Button(action: { viewModel.performDash() }) {
+                VStack(spacing: 4) {
+                    Image(systemName: "bolt.fill")
+                        .font(.title2)
+                    Text("Dash")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(viewModel.canDash ? .cyan : .gray)
+                .frame(width: 70, height: 70)
+                .background(
+                    Circle()
+                        .fill(viewModel.canDash ? Color.cyan.opacity(0.2) : Color.gray.opacity(0.2))
+                )
+                .overlay(
+                    Circle()
+                        .stroke(viewModel.canDash ? Color.cyan : Color.gray, lineWidth: 2)
+                )
             }
             .pressEffect()
-
-            HStack(spacing: 32) {
-                // Left button
-                Button(action: { viewModel.changeDirection(.left) }) {
-                    controlButtonArrow(systemName: "arrow.left")
-                }
-                .pressEffect()
-
-                // Down button
-                Button(action: { viewModel.changeDirection(.down) }) {
-                    controlButtonArrow(systemName: "arrow.down")
-                }
-                .pressEffect()
-
-                // Right button
-                Button(action: { viewModel.changeDirection(.right) }) {
-                    controlButtonArrow(systemName: "arrow.right")
-                }
-                .pressEffect()
-            }
+            .disabled(!viewModel.canDash)
         }
-        .padding()
-        .background(Color.white.opacity(0.9))
-        .cornerRadius(16)
     }
 
     private func controlButtonArrow(systemName: String) -> some View {
         Image(systemName: systemName)
-            .font(.system(size: 32, weight: .semibold))
+            .font(.system(size: 28, weight: .semibold))
             .foregroundColor(.accentColor)
-            .frame(width: 60, height: 60)
+            .frame(width: 55, height: 55)
             .background(Color.gray.opacity(0.2))
             .cornerRadius(12)
     }
