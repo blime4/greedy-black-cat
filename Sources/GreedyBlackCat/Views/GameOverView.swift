@@ -77,6 +77,8 @@ struct GameOverView: View {
                         .background(Color.accentColor)
                         .cornerRadius(12)
                     }
+                    .buttonStyle(GameButtonStyle(isPrimary: true))
+                    .pressEffect()
 
                     Button(action: onMainMenu) {
                         HStack {
@@ -90,6 +92,8 @@ struct GameOverView: View {
                         .background(Color.gray.opacity(0.15))
                         .cornerRadius(12)
                     }
+                    .buttonStyle(GameButtonStyle(isPrimary: false))
+                    .pressEffect()
                 }
                 .padding(.horizontal, 32)
             }

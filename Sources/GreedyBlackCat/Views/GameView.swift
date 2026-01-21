@@ -58,28 +58,44 @@ struct GameView: View {
 
     // MARK: - HUD
     private var hudView: some View {
-        HStack {
+        HStack(spacing: 16) {
             // Score
             HStack(spacing: 8) {
                 Text("Score:")
                     .font(.headline)
+                    .foregroundColor(.primary)
                 Text("\(viewModel.score)")
                     .font(.system(.title2, design: .monospaced))
                     .fontWeight(.bold)
                     .foregroundColor(.accentColor)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.8))
+                    .shadow(color: Color.black.opacity(0.05), radius: 3)
+            )
 
             Spacer()
 
             // High Score
             HStack(spacing: 8) {
-                Text("High Score:")
+                Image(systemName: "trophy.fill")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.yellow)
                 Text("\(viewModel.highScore)")
                     .font(.system(.body, design: .monospaced))
+                    .fontWeight(.semibold)
                     .foregroundColor(.secondary)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.8))
+                    .shadow(color: Color.black.opacity(0.05), radius: 3)
+            )
 
             Spacer()
 
@@ -92,9 +108,8 @@ struct GameView: View {
                     .font(.title)
                     .foregroundColor(.accentColor)
             }
-            #if os(iOS)
-            .buttonStyle(.plain)
-            #endif
+            .buttonStyle(GameButtonStyle(isPrimary: false))
+            .pressEffect()
         }
     }
 
@@ -105,13 +120,23 @@ struct GameView: View {
             let cellSize = gridSize / CGFloat(max(viewModel.gridWidth, viewModel.gridHeight))
 
             ZStack {
-                // Grid background
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(white: 0.9, opacity: 1.0))
+                // Grid background with gradient
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(white: 0.95),
+                                Color(white: 0.88)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(width: cellSize * CGFloat(viewModel.gridWidth),
                            height: cellSize * CGFloat(viewModel.gridHeight))
+                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
 
-                // Draw grid lines (optional)
+                // Draw grid lines
                 gridLinesView(cellSize: cellSize)
 
                 // Food
@@ -135,6 +160,22 @@ struct GameView: View {
                         y: CGFloat(position.y) * cellSize + cellSize / 2
                     )
                 }
+
+                // Score popups
+                ForEach(viewModel.scorePopups) { popup in
+                    ScorePopupView(
+                        points: popup.points,
+                        position: CGPoint(
+                            x: CGFloat(popup.position.x) * cellSize + cellSize / 2,
+                            y: CGFloat(popup.position.y) * cellSize + cellSize / 2
+                        ),
+                        cellSize: cellSize
+                    )
+                    .position(
+                        x: CGFloat(popup.position.x) * cellSize + cellSize / 2,
+                        y: CGFloat(popup.position.y) * cellSize + cellSize / 2
+                    )
+                }
             }
             .frame(width: gridSize, height: gridSize)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
@@ -143,18 +184,38 @@ struct GameView: View {
 
     private func gridLinesView(cellSize: CGFloat) -> some View {
         ZStack {
-            // Vertical lines
+            // Vertical lines - more subtle and elegant
             ForEach(0...viewModel.gridWidth, id: \.self) { x in
                 Rectangle()
-                    .fill(Color.gray.opacity(0.3))
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.gray.opacity(0),
+                                Color.gray.opacity(0.15),
+                                Color.gray.opacity(0)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
                     .frame(width: 1)
                     .offset(x: CGFloat(x) * cellSize - cellSize * CGFloat(viewModel.gridWidth) / 2)
             }
 
-            // Horizontal lines
+            // Horizontal lines - more subtle and elegant
             ForEach(0...viewModel.gridHeight, id: \.self) { y in
                 Rectangle()
-                    .fill(Color.gray.opacity(0.3))
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.gray.opacity(0),
+                                Color.gray.opacity(0.15),
+                                Color.gray.opacity(0)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .frame(height: 1)
                     .offset(y: CGFloat(y) * cellSize - cellSize * CGFloat(viewModel.gridHeight) / 2)
             }
@@ -171,22 +232,26 @@ struct GameView: View {
             Button(action: { viewModel.changeDirection(.up) }) {
                 controlButtonArrow(systemName: "arrow.up")
             }
+            .pressEffect()
 
             HStack(spacing: 32) {
                 // Left button
                 Button(action: { viewModel.changeDirection(.left) }) {
                     controlButtonArrow(systemName: "arrow.left")
                 }
+                .pressEffect()
 
                 // Down button
                 Button(action: { viewModel.changeDirection(.down) }) {
                     controlButtonArrow(systemName: "arrow.down")
                 }
+                .pressEffect()
 
                 // Right button
                 Button(action: { viewModel.changeDirection(.right) }) {
                     controlButtonArrow(systemName: "arrow.right")
                 }
+                .pressEffect()
             }
         }
         .padding()
@@ -228,6 +293,8 @@ struct GameView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
+                    .buttonStyle(GameButtonStyle(isPrimary: true))
+                    .pressEffect()
 
                     Button(action: {
                         showingPauseMenu = false
@@ -239,6 +306,8 @@ struct GameView: View {
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
                     }
+                    .buttonStyle(GameButtonStyle(isPrimary: false))
+                    .pressEffect()
 
                     Button(action: {
                         showingPauseMenu = false
@@ -251,6 +320,8 @@ struct GameView: View {
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
                     }
+                    .buttonStyle(GameButtonStyle(isPrimary: false))
+                    .pressEffect()
                 }
                 .padding(.horizontal, 40)
             }

@@ -3,6 +3,8 @@ import SwiftUI
 struct MainMenuView: View {
     @State private var highScore: Int = UserDefaults.standard.integer(forKey: "GreedyBlackCatHighScore")
     @State private var showingGame = false
+    @State private var showingAbout = false
+    @State private var showingSettings = false
     @State private var gameViewModel: GameViewModel?
 
     var body: some View {
@@ -79,24 +81,25 @@ struct MainMenuView: View {
                         .cornerRadius(16)
                         .shadow(color: Color.accentColor.opacity(0.3), radius: 10, x: 0, y: 5)
                     }
-                    .buttonStyle(.plain)
-                    .scaleEffect(1.0)
-                    .animation(.spring(response: 0.3), value: showingGame)
+                    .buttonStyle(GameButtonStyle(isPrimary: true))
+                    .pressEffect()
 
                     // Secondary Buttons
                     HStack(spacing: 40) {
                         Button("About") {
-                            // Show about sheet
+                            showingAbout = true
                         }
                         .font(.body)
                         .foregroundColor(.secondary)
+                        .pressEffect()
 
                         #if os(macOS)
                         Button("Settings") {
-                            // Open settings
+                            showingSettings = true
                         }
                         .font(.body)
                         .foregroundColor(.secondary)
+                        .pressEffect()
                         #endif
                     }
 
@@ -124,6 +127,14 @@ struct MainMenuView: View {
         .onAppear {
             highScore = UserDefaults.standard.integer(forKey: "GreedyBlackCatHighScore")
         }
+        .sheet(isPresented: $showingAbout) {
+            AboutView()
+        }
+        #if os(macOS)
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
+        }
+        #endif
     }
 }
 

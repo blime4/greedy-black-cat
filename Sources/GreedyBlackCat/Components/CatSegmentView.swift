@@ -5,6 +5,9 @@ struct CatSegmentView: View {
     let direction: Direction
     let cellSize: CGFloat
 
+    @State private var mouthScale: CGFloat = 1.0
+    @State private var appearScale: CGFloat = 0.0
+
     var body: some View {
         ZStack {
             if isHead {
@@ -14,6 +17,11 @@ struct CatSegmentView: View {
             }
         }
         .frame(width: cellSize * 0.9, height: cellSize * 0.9)
+        .scaleEffect(appearScale)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: appearScale)
+        .onAppear {
+            appearScale = 1.0
+        }
     }
 
     // MARK: - Cat Head
@@ -43,17 +51,26 @@ struct CatSegmentView: View {
                 .frame(width: cellSize * 0.15, height: cellSize * 0.12)
                 .offset(y: cellSize * 0.08)
 
-            // Mouth (slight smile)
+            // Mouth (slight smile with animation)
             Path { path in
                 path.move(to: CGPoint(x: 0, y: 0))
                 path.addQuadCurve(
                     to: CGPoint(x: 1, y: 0),
-                    control: CGPoint(x: 0.5, y: 1)
+                    control: CGPoint(x: 0.5, y: 1 * mouthScale)
                 )
             }
             .stroke(Color(hex: "333333"), lineWidth: cellSize * 0.03)
             .frame(width: cellSize * 0.3, height: cellSize * 0.1)
             .offset(y: cellSize * 0.15)
+            .onAppear {
+                // Gentle mouth animation
+                withAnimation(
+                    Animation.easeInOut(duration: 0.8)
+                        .repeatForever(autoreverses: true)
+                ) {
+                    mouthScale = 0.6
+                }
+            }
 
             // Whiskers
             whiskersView
@@ -130,10 +147,11 @@ struct CatSegmentView: View {
                         Color(hex: "1A1A1A"),
                         Color(hex: "2D2D2D")
                     ],
-                    startPoint: .leading,
-                    endPoint: .trailing
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
             )
+            .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
     }
 }
 

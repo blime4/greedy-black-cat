@@ -4,6 +4,9 @@ struct FoodView: View {
     let food: Food
     let cellSize: CGFloat
 
+    @State private var isFloating = false
+    @State private var glowScale: CGFloat = 1.0
+
     init(food: Food, cellSize: CGFloat) {
         self.food = food
         self.cellSize = cellSize
@@ -11,6 +14,12 @@ struct FoodView: View {
 
     var body: some View {
         ZStack {
+            // Glow effect
+            Circle()
+                .fill(fishColor.opacity(0.3))
+                .frame(width: cellSize * glowScale, height: cellSize * glowScale)
+                .blur(radius: 5)
+
             fishBody
                 .fill(fishColor)
                 .frame(width: cellSize * 0.7, height: cellSize * 0.5)
@@ -36,7 +45,24 @@ struct FoodView: View {
                 .rotationEffect(.degrees(-90))
         }
         .rotationEffect(.degrees(-90))
-        .shadow(color: fishColor.opacity(0.3), radius: 3, x: 0, y: 2)
+        .shadow(color: fishColor.opacity(0.4), radius: 4, x: 0, y: 2)
+        // Floating animation - bob up and down
+        .offset(y: isFloating ? -cellSize * 0.05 : cellSize * 0.05)
+        .animation(
+            Animation.easeInOut(duration: 1.5)
+                .repeatForever(autoreverses: true),
+            value: isFloating
+        )
+        // Glow pulsing animation
+        .animation(
+            Animation.easeInOut(duration: 2.0)
+                .repeatForever(autoreverses: true),
+            value: glowScale
+        )
+        .onAppear {
+            isFloating = true
+            glowScale = 0.9
+        }
     }
 
     private var fishBody: some Shape {

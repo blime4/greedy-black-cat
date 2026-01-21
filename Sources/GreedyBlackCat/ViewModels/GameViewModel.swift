@@ -11,6 +11,7 @@ class GameViewModel: ObservableObject {
     @Published var score: Int = 0
     @Published var highScore: Int = 0
     @Published var settings: GameSettings
+    @Published var scorePopups: [ScorePopup] = []
 
     // MARK: - Timer
     private var gameTimer: Timer?
@@ -143,6 +144,13 @@ class GameViewModel: ObservableObject {
     private func handleFoodEaten() {
         guard let currentFood = food else { return }
         score += currentFood.points
+
+        // Add score popup at food position
+        let popup = ScorePopup(points: currentFood.points, position: currentFood.position)
+        scorePopups.append(popup)
+
+        // Clean up old popups
+        scorePopups.removeAll { $0.isExpired }
 
         // Generate new food
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
