@@ -30,6 +30,8 @@ struct GameView: View {
                 // Game Grid
                 gameGridView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .offset(x: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake),
+                            y: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake))
 
                 // Controls (iOS only)
                 #if os(iOS)
@@ -38,6 +40,22 @@ struct GameView: View {
                         .padding()
                 }
                 #endif
+            }
+
+            // Active Power-ups Indicator
+            if !viewModel.activePowerUps.isEmpty {
+                activePowerUpsView
+                    .padding(.leading)
+                    .padding(.bottom, 100)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            // Combo Indicator
+            if viewModel.comboCount > 1 {
+                comboIndicatorView
+                    .padding(.trailing)
+                    .padding(.bottom, 100)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
             // Pause Menu Overlay
@@ -58,7 +76,7 @@ struct GameView: View {
 
     // MARK: - HUD
     private var hudView: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             // Score
             HStack(spacing: 8) {
                 Text("Score:")
@@ -76,6 +94,26 @@ struct GameView: View {
                     .fill(Color.white.opacity(0.8))
                     .shadow(color: Color.black.opacity(0.05), radius: 3)
             )
+
+            // Combo indicator in HUD
+            if viewModel.comboCount > 1 {
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .font(.subheadline)
+                        .foregroundColor(.orange)
+                    Text("\(viewModel.comboCount)x")
+                        .font(.system(.body, design: .monospaced))
+                        .fontWeight(.bold)
+                        .foregroundColor(.orange)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.orange.opacity(0.2))
+                        .shadow(color: Color.orange.opacity(0.2), radius: 3)
+                )
+            }
 
             Spacer()
 
@@ -145,6 +183,15 @@ struct GameView: View {
                         .position(
                             x: CGFloat(food.position.x) * cellSize + cellSize / 2,
                             y: CGFloat(food.position.y) * cellSize + cellSize / 2
+                        )
+                }
+
+                // Power-ups
+                ForEach(viewModel.powerUps) { powerUp in
+                    PowerUpView(powerUp: powerUp, cellSize: cellSize)
+                        .position(
+                            x: CGFloat(powerUp.position.x) * cellSize + cellSize / 2,
+                            y: CGFloat(powerUp.position.y) * cellSize + cellSize / 2
                         )
                 }
 
@@ -330,6 +377,64 @@ struct GameView: View {
             .cornerRadius(16)
             .padding(40)
         }
+    }
+}
+
+// MARK: - Active Power-ups View
+private extension GameView {
+    var activePowerUpsView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(viewModel.activePowerUps) { powerUp in
+                HStack(spacing: 8) {
+                    Text(powerUp.type.icon)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(powerUp.type.name)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        // Progress bar
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(Color.white.opacity(0.3))
+                                    .frame(height: 4)
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(powerUp.type.color)
+                                    .frame(width: geometry.size.width * (1 - powerUp.progress), height: 4)
+                            }
+                        }
+                        .frame(width: 60, height: 4)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(powerUp.type.color.opacity(0.2))
+                )
+            }
+        }
+    }
+
+    var comboIndicatorView: some View {
+        VStack(spacing: 4) {
+            Text("\(viewModel.comboCount)x")
+                .font(.system(size: 32, weight: .bold))
+                .foregroundColor(.yellow)
+            Text("COMBO")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.orange.opacity(0.9))
+                .shadow(color: Color.orange.opacity(0.5), radius: 8)
+        )
+        .scaleEffect(viewModel.comboCount > 1 ? 1.0 : 0.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.comboCount)
     }
 }
 
