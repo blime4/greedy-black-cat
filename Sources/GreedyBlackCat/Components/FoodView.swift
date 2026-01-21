@@ -44,6 +44,7 @@ struct FoodView: View {
 
             // Magnetic attraction rings
             if isMagnetic {
+                // Outer pulsing rings
                 Circle()
                     .stroke(
                         LinearGradient(
@@ -53,8 +54,20 @@ struct FoodView: View {
                         ),
                         lineWidth: 2
                     )
-                    .frame(width: cellSize * 1.2, height: cellSize * 1.2)
+                    .frame(width: cellSize * 1.3, height: cellSize * 1.3)
                     .rotationEffect(.degrees(isMagnetic ? 360 : 0))
+
+                // Inner attraction particles
+                ForEach(0..<4, id: \.self) { index in
+                    Circle()
+                        .fill(fishColor.opacity(0.4))
+                        .frame(width: cellSize * 0.08, height: cellSize * 0.08)
+                        .offset(
+                            x: cos(Double(index) * .pi / 2) * cellSize * 0.4,
+                            y: sin(Double(index) * .pi / 2) * cellSize * 0.4
+                        )
+                        .scaleEffect(isFloating ? 1.2 : 0.8)
+                }
             }
 
             // Glow effect

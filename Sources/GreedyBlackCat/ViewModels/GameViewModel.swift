@@ -20,6 +20,7 @@ class GameViewModel: ObservableObject {
     @Published var hitEffects: [HitEffect] = []
     @Published var screenShake: CGFloat = 0
     @Published var cameraZoom: CGFloat = 1.0
+    @Published var gameOverImpact: Bool = false
     @Published var canDash: Bool = true
     @Published var isDashing: Bool = false
     @Published var gameMode: GameMode = .classic
@@ -386,6 +387,11 @@ class GameViewModel: ObservableObject {
         // Increase speed gradually
         increaseSpeed()
 
+        // Check for score milestone (every 100 points)
+        if score > 0 && score % 100 == 0 {
+            celebrateScoreMilestone(at: position)
+        }
+
         // Check for growth milestone (every 5 segments)
         let catLength = cat.body.count
         if catLength > 3 && catLength % 5 == 0 {
@@ -414,6 +420,38 @@ class GameViewModel: ObservableObject {
         // Show achievement popup
         showingAchievement = true
         achievementUnlocked = "Growth: \(cat.body.count)!"
+    }
+
+    private func celebrateScoreMilestone(at position: Position) {
+        // Screen flash for milestone
+        screenFlashIntensity = 0.4
+
+        // Screen shake
+        screenShake = 5
+
+        // Haptic feedback
+        #if os(iOS)
+        HapticFeedback.medium()
+        #endif
+
+        // Spawn gold particles for score milestone
+        for _ in 0..<12 {
+            let angle = Double.random(in: 0...(2 * .pi))
+            let speed = Double.random(in: 1.0...2.5)
+            let particle = Particle(
+                position: CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)),
+                velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
+                color: .yellow,
+                size: CGFloat.random(in: 0.08...0.2),
+                life: 0,
+                maxLife: Double.random(in: 0.4...0.8)
+            )
+            particles.append(particle)
+        }
+
+        // Show achievement popup
+        showingAchievement = true
+        achievementUnlocked = "\(score) Points!"
     }
 
     private func spawnParticles(at position: Position, color: Color, count: Int) {
@@ -628,6 +666,18 @@ class GameViewModel: ObservableObject {
         #if os(iOS)
         HapticFeedback.error()
         #endif
+
+        // Game over impact effect
+        gameOverImpact = true
+        screenShake = 10
+        screenFlashIntensity = 0.3
+        cameraZoom = 0.9
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            gameOverImpact = false
+            cameraZoom = 1.0
+        }
 
         if score > highScore {
             highScore = score

@@ -35,9 +35,12 @@ struct GameView: View {
                 gameGridView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scaleEffect(viewModel.cameraZoom)
+                    .grayscale(viewModel.gameOverImpact ? 0.5 : 0)
+                    .opacity(viewModel.gameOverImpact ? 0.8 : 1.0)
                     .offset(x: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake),
                             y: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.cameraZoom)
+                    .animation(.easeOut(duration: 0.3), value: viewModel.gameOverImpact)
 
                 // Controls (iOS only)
                 #if os(iOS)
@@ -546,6 +549,8 @@ private extension GameView {
                 HStack(spacing: 8) {
                     Text(powerUp.type.icon)
                         .font(.title3)
+                        .opacity(powerUp.isExpiringSoon ? 0.5 : 1.0)
+                        .animation(.easeInOut(duration: 0.3).repeatForever(autoreverses: true), value: powerUp.isExpiringSoon)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(powerUp.type.name)
                             .font(.caption)
@@ -557,7 +562,7 @@ private extension GameView {
                                     .fill(Color.white.opacity(0.3))
                                     .frame(height: 4)
                                 RoundedRectangle(cornerRadius: 2)
-                                    .fill(powerUp.type.color)
+                                    .fill(powerUp.isExpiringSoon ? Color.red : powerUp.type.color)
                                     .frame(width: geometry.size.width * (1 - powerUp.progress), height: 4)
                             }
                         }
@@ -568,7 +573,11 @@ private extension GameView {
                 .padding(.vertical, 6)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(powerUp.type.color.opacity(0.2))
+                        .fill(powerUp.isExpiringSoon ? Color.red.opacity(0.3) : powerUp.type.color.opacity(0.2))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red.opacity(powerUp.isExpiringSoon ? 0.8 : 0), lineWidth: 2)
                 )
             }
         }

@@ -84,4 +84,8 @@ struct ActivePowerUp: Identifiable {
         let elapsed = Date().timeIntervalSince(startTime)
         return max(0, min(1, elapsed / duration))
     }
+
+    var isExpiringSoon: Bool {
+        remainingTime < 3.0 && remainingTime > 0
+    }
 }
