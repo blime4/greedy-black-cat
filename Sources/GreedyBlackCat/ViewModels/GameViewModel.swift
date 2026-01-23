@@ -86,6 +86,7 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Task Storage
     nonisolated(unsafe) private var activeTasks: Set<Task<Void, Never>> = []
+    private var bossAttackTask: Task<Void, Never>?
 
     // MARK: - Input Queue
     private var inputQueue: [Direction] = []
@@ -238,6 +239,8 @@ class GameViewModel: ObservableObject {
     private func cancelAllTasks() {
         activeTasks.forEach { $0.cancel() }
         activeTasks.removeAll()
+        bossAttackTask?.cancel()
+        bossAttackTask = nil
     }
 
     deinit {
@@ -1409,6 +1412,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func scheduleBossAttack(interval: TimeInterval) {
+        // Cancel any existing boss attack task
+        bossAttackTask?.cancel()
+
         let task = Task { @MainActor in
             while !Task.isCancelled && bossBattleActive && currentBoss != nil {
                 let nanoseconds = UInt64(interval) * 1_000_000_000
@@ -1418,6 +1424,7 @@ class GameViewModel: ObservableObject {
                 }
             }
         }
+        bossAttackTask = task
         addTask(task)
     }
 
