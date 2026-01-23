@@ -686,12 +686,14 @@ class GameViewModel: ObservableObject {
     }
 
     private func updateParticles() {
-        for i in particles.indices {
-            particles[i].life += currentSpeed
-            particles[i].position.x += particles[i].velocity.dx * CGFloat(currentSpeed)
-            particles[i].position.y += particles[i].velocity.dy * CGFloat(currentSpeed)
+        // Update particles and filter out dead ones in a single pass
+        particles = particles.compactMap { particle in
+            var updated = particle
+            updated.life += currentSpeed
+            updated.position.x += updated.velocity.dx * CGFloat(currentSpeed)
+            updated.position.y += updated.velocity.dy * CGFloat(currentSpeed)
+            return updated.isDead ? nil : updated
         }
-        particles.removeAll { $0.isDead }
     }
 
     private func spawnObstaclesIfNeeded() {
