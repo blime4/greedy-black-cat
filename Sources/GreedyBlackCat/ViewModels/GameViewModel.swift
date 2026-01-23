@@ -785,6 +785,9 @@ class GameViewModel: ObservableObject {
         // Only celebrate every 10 foods (10, 20, 30, etc.)
         guard consecutiveFoodsWithoutCollision % 10 == 0 else { return }
 
+        // Validate position is within bounds
+        guard position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Trigger scene transition effect
         milestoneCelebration = true
 
