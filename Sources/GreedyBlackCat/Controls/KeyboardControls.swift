@@ -52,7 +52,7 @@ struct KeyboardControls: ViewModifier {
                     break
                 }
 
-                // 检查字母键 (WASD) + Shift for dash
+                // 检查字母键 (WASD) for movement
                 let chars = keyPress.characters.lowercased()
                 if chars == "w" {
                     viewModel.changeDirection(.up)
@@ -65,9 +65,6 @@ struct KeyboardControls: ViewModifier {
                     return .handled
                 } else if chars == "d" {
                     viewModel.changeDirection(.right)
-                    return .handled
-                } else if chars == " " {
-                    viewModel.performDash()
                     return .handled
                 }
 
