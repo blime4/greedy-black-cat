@@ -1366,6 +1366,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func showPowerUpComboNotification(name: String, description: String, bonus: Int, color: Color) {
+        // Validate bonus is positive
+        guard bonus > 0 else { return }
+
         // Add bonus score
         score += bonus
 
