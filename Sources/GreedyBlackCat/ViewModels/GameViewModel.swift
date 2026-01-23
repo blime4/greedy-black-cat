@@ -1633,6 +1633,10 @@ class GameViewModel: ObservableObject {
     }
 
     private func checkDirectionalCollision(attack: BossAttack, catPosition: Position, maxDistance: Int, allowDiagonal: Bool = false) -> Bool {
+        // Validate positions are within bounds
+        guard catPosition.isInBounds(width: gridWidth, height: gridHeight) else { return false }
+        guard attack.position.isInBounds(width: gridWidth, height: gridHeight) else { return false }
+
         let dx = catPosition.x - attack.position.x
         let dy = catPosition.y - attack.position.y
 
