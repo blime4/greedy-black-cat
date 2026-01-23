@@ -463,14 +463,16 @@ class GameViewModel: ObservableObject {
                !obstacles.contains(where: { $0.position == candidate }) {
                 return candidate
             }
-            return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+            // Fallback: return original head position if magnetized position is invalid
+            return cat.head
         } else if dy == 0 {
             let candidate = Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
             if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
                !obstacles.contains(where: { $0.position == candidate }) {
                 return candidate
             }
-            return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+            // Fallback: return original head position if magnetized position is invalid
+            return cat.head
         }
 
         // Otherwise use current direction but bias toward food
