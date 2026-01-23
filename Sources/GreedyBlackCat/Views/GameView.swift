@@ -217,7 +217,7 @@ struct GameView: View {
             if viewModel.showVictoryCelebration {
                 VictoryCelebrationView(
                     score: viewModel.score,
-                    isNewHighScore: viewModel.score >= viewModel.highScore && viewModel.score > 0,
+                    isNewHighScore: viewModel.score > viewModel.highScore && viewModel.score > 0,
                     onContinue: {
                         viewModel.showVictoryCelebration = false
                         viewModel.restartGame()
