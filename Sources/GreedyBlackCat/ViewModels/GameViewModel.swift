@@ -1397,7 +1397,12 @@ class GameViewModel: ObservableObject {
 
         // Spawn celebratory particles
         if let headPosition = cat.body.first {
-            for _ in 0..<15 {
+            // Validate head position is within bounds
+            guard headPosition.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
+            // Respect maximum particle limit
+            let particleCount = min(15, max(0, 100 - particles.count))
+            for _ in 0..<particleCount {
                 let angle = Double.random(in: 0...(2 * .pi))
                 let speed = Double.random(in: 2.0...4.0)
                 let particle = Particle(
