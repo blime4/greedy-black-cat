@@ -502,7 +502,7 @@ class GameViewModel: ObservableObject {
                !obstacles.contains(where: { $0.position == candidate }) {
                 return candidate
             }
-            return candidate
+            return cat.head.applying(cat.direction.offset)
         case .down:
             if dy > 0 && abs(dy) >= abs(dx) {
                 let candidate = cat.head.applying(cat.direction.offset)
@@ -517,7 +517,7 @@ class GameViewModel: ObservableObject {
                !obstacles.contains(where: { $0.position == candidate }) {
                 return candidate
             }
-            return candidate
+            return cat.head.applying(cat.direction.offset)
         case .left:
             if dx < 0 && abs(dx) >= abs(dy) {
                 let candidate = cat.head.applying(cat.direction.offset)
@@ -532,7 +532,7 @@ class GameViewModel: ObservableObject {
                !obstacles.contains(where: { $0.position == candidate }) {
                 return candidate
             }
-            return candidate
+            return cat.head.applying(cat.direction.offset)
         case .right:
             if dx > 0 && abs(dx) >= abs(dy) {
                 let candidate = cat.head.applying(cat.direction.offset)
@@ -547,7 +547,7 @@ class GameViewModel: ObservableObject {
                !obstacles.contains(where: { $0.position == candidate }) {
                 return candidate
             }
-            return candidate
+            return cat.head.applying(cat.direction.offset)
         }
     }
 
@@ -1366,8 +1366,8 @@ class GameViewModel: ObservableObject {
     }
 
     private func showPowerUpComboNotification(name: String, description: String, bonus: Int, color: Color) {
-        // Validate bonus is positive
-        guard bonus > 0 else { return }
+        // Validate parameters
+        guard bonus > 0 && !name.isEmpty && !description.isEmpty else { return }
 
         // Add bonus score
         score += bonus
