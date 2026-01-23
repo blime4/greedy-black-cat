@@ -1464,6 +1464,12 @@ class GameViewModel: ObservableObject {
         // Find a valid spawn position away from the cat
         let spawnPosition = findBossSpawnPosition()
 
+        // Validate spawn position is within bounds
+        guard spawnPosition.isInBounds(width: gridWidth, height: gridHeight) else {
+            // If no valid position found, cancel boss spawn
+            return
+        }
+
         let boss = Boss(type: type, position: spawnPosition)
         currentBoss = boss
         bossBattleActive = true
