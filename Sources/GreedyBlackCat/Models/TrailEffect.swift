@@ -5,7 +5,7 @@ struct TrailPoint: Identifiable {
     let id = UUID()
     let position: Position
     let alpha: Double
-    let createdAt = Date
+    let createdAt: Date
 }
 
 struct TrailSystem {
@@ -27,7 +27,7 @@ struct TrailSystem {
         return points
     }
 
-    func clear() {
+    mutating func clear() {
         points.removeAll()
     }
 }

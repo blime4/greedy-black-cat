@@ -7,11 +7,13 @@ struct CatSegmentView: View {
     var comboCount: Int = 0
     var isInvincible: Bool = false
     var gameMode: GameMode = .classic
+    var isEating: Bool = false
 
     @State private var mouthScale: CGFloat = 1.0
     @State private var appearScale: CGFloat = 0.0
     @State private var isGlowing = false
     @State private var eyePulse: CGFloat = 1.0
+    @State private var jawOpen: CGFloat = 0
 
     private var emotion: CatEmotion {
         if isInvincible {
@@ -57,6 +59,7 @@ struct CatSegmentView: View {
         .frame(width: cellSize * 0.9, height: cellSize * 0.9)
         .scaleEffect(appearScale)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: appearScale)
+        .animation(.spring(response: 0.15, dampingFraction: 0.6), value: jawOpen)
         .animation(
             Animation.easeInOut(duration: 1.5)
                 .repeatForever(autoreverses: true),
@@ -65,6 +68,19 @@ struct CatSegmentView: View {
         .onAppear {
             appearScale = 1.0
             isGlowing = true
+        }
+        .onChange(of: isEating) { _, newValue in
+            if newValue && isHead {
+                // Trigger jaw chomp animation
+                withAnimation(.easeOut(duration: 0.1)) {
+                    jawOpen = 1.0
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.easeIn(duration: 0.1)) {
+                        jawOpen = 0
+                    }
+                }
+            }
         }
     }
 
@@ -110,16 +126,34 @@ struct CatSegmentView: View {
                 .frame(width: cellSize * 0.15, height: cellSize * 0.12)
                 .offset(y: cellSize * 0.08)
 
-            // Mouth with emotion-based animation
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: 0))
-                path.addQuadCurve(
-                    to: CGPoint(x: 1, y: 0),
-                    control: CGPoint(x: 0.5, y: emotion.mouthPath.0 * emotion.mouthPath.1)
-                )
+            // Mouth with emotion-based animation and jaw chomp
+            ZStack {
+                // Upper jaw
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: 0))
+                    path.addQuadCurve(
+                        to: CGPoint(x: 1, y: 0),
+                        control: CGPoint(x: 0.5, y: emotion.mouthPath.0 * emotion.mouthPath.1)
+                    )
+                }
+                .stroke(Color(hex: "333333"), lineWidth: cellSize * 0.03)
+                .frame(width: cellSize * 0.3, height: cellSize * 0.1)
+                .offset(y: cellSize * 0.13 - (jawOpen * cellSize * 0.05))
+
+                // Lower jaw (animated during eating)
+                if jawOpen > 0 {
+                    Path { path in
+                        path.move(to: CGPoint(x: 0, y: 0))
+                        path.addQuadCurve(
+                            to: CGPoint(x: 1, y: 0),
+                            control: CGPoint(x: 0.5, y: emotion.mouthPath.0 * emotion.mouthPath.1)
+                        )
+                    }
+                    .stroke(Color(hex: "333333"), lineWidth: cellSize * 0.03)
+                    .frame(width: cellSize * 0.3, height: cellSize * 0.1)
+                    .offset(y: cellSize * 0.17 + (jawOpen * cellSize * 0.05))
+                }
             }
-            .stroke(Color(hex: "333333"), lineWidth: cellSize * 0.03)
-            .frame(width: cellSize * 0.3, height: cellSize * 0.1)
             .offset(y: cellSize * 0.15)
 
             // Whiskers with emotion angle

@@ -25,6 +25,7 @@ class GameViewModel: ObservableObject {
     @Published var canDash: Bool = true
     @Published var isDashing: Bool = false
     @Published var gameMode: GameMode = .classic
+    @Published var gamePulse: CGFloat = 0
     @Published var timeRemaining: TimeInterval = 0
     @Published var foodEaten: Int = 0
     @Published var powerUpsCollected: Int = 0
@@ -35,6 +36,29 @@ class GameViewModel: ObservableObject {
     @Published var achievementUnlocked: String = ""
     @Published var showComboPopup: Bool = false
     @Published var comboMultiplier: Int = 1
+    @Published var isEating: Bool = false
+    @Published var difficultyLevel: Int = 1
+    @Published var difficultyNotification: String = ""
+    @Published var currentWeather: WeatherType = .sunny
+    @Published var showWeatherEffects: Bool = true
+    @Published var currentBoss: Boss?
+    @Published var bossAttacks: [BossAttack] = []
+    @Published var bossBattleActive: Bool = false
+    @Published var sceneTransitionActive: Bool = false
+    @Published var milestoneCelebration: Bool = false
+    @Published var achievementCelebration: Bool = false
+    @Published var currentAchievement: AchievementType = .highScore
+    @Published var showToast: Bool = false
+    @Published var toastMessage: String = ""
+    @Published var toastIcon: String = ""
+    @Published var toastType: ToastType = .milestone
+    @Published var neonGlowActive: Bool = false
+    @Published var beatSyncActive: Bool = true
+    @Published var screenDistortionActive: Bool = false
+    @Published var holographicEffectActive: Bool = false
+    @Published var showVictoryCelebration: Bool = false
+    @Published var activeFlashType: FlashType? = nil
+    @Published var flashIntensity: Double = 0.8
 
     // MARK: - Trail System
     private var trailSystem = TrailSystem()
@@ -42,6 +66,8 @@ class GameViewModel: ObservableObject {
     // MARK: - Combo System
     private var lastEatTime: Date?
     private let comboWindow: TimeInterval = 2.0
+    private var maxComboStreak: Int = 0
+    private var consecutiveFoodsWithoutCollision: Int = 0
 
     // MARK: - Dash System
     private var dashCooldown: TimeInterval = 0
@@ -125,6 +151,7 @@ class GameViewModel: ObservableObject {
         inputQueue = []
         comboCount = 0
         lastEatTime = nil
+        consecutiveFoodsWithoutCollision = 0
         scorePopups = []
         powerUps = []
         activePowerUps = []
@@ -214,6 +241,9 @@ class GameViewModel: ObservableObject {
         // Update dash cooldown
         updateDashCooldown()
 
+        // Update game pulse rhythm
+        gamePulse = gamePulse == 0 ? 1.0 : 0
+
         // Update trails
         trailPoints = trailSystem.update(decayRate: currentSpeed)
 
@@ -257,6 +287,11 @@ class GameViewModel: ObservableObject {
 
         // Add trail point before moving
         trailSystem.addPoint(cat.head)
+
+        // Add speed particles during high combos
+        if comboCount >= 3 {
+            spawnSpeedParticle(at: cat.head, color: comboCount >= 5 ? .yellow : .orange)
+        }
 
         // Check food collision
         let ateFood = food?.position == newPosition
@@ -330,7 +365,15 @@ class GameViewModel: ObservableObject {
     private func handleFoodEaten(at position: Position) {
         guard let currentFood = food else { return }
 
+        // Trigger eating animation
+        isEating = true
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            isEating = false
+        }
+
         foodEaten += 1
+        consecutiveFoodsWithoutCollision += 1
 
         // Handle combo system
         let now = Date()
@@ -346,10 +389,34 @@ class GameViewModel: ObservableObject {
         let points = currentFood.points * comboMultiplier
         score += points
 
+        // Holographic effect for rare food (large fish)
+        if currentFood.type == .largeFish {
+            holographicEffectActive = true
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 800_000_000)
+                holographicEffectActive = false
+            }
+        }
+
         // Screen flash and shake on combo milestones
         if comboCount == 3 || comboCount == 5 {
             screenShake = CGFloat(comboCount)
             screenFlashIntensity = comboCount == 5 ? 0.5 : 0.3
+
+            // Activate neon glow for mega combos
+            if comboCount >= 5 {
+                neonGlowActive = true
+            }
+
+            // Activate screen distortion on heavy impacts
+            if comboCount >= 5 || screenShake > 10 {
+                screenDistortionActive = true
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    screenDistortionActive = false
+                }
+            }
+
             #if os(iOS)
             HapticFeedback.medium()
             #endif
@@ -363,6 +430,7 @@ class GameViewModel: ObservableObject {
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 200_000_000)
                 cameraZoom = 1.0
+                neonGlowActive = false
             }
 
             // Hide popup after animation
@@ -373,12 +441,12 @@ class GameViewModel: ObservableObject {
         }
 
         // Spawn particles
-        spawnParticles(at: position, color: currentFood.type.color, count: 8)
+        spawnParticles(at: position, color: Color.orange, count: 8)
 
         // Add hit effect
         hitEffects.append(HitEffect(
             position: CGPoint(x: position.x, y: position.y),
-            color: currentFood.type.color
+            color: Color.orange
         ))
 
         // Add score popup at food position
@@ -400,10 +468,24 @@ class GameViewModel: ObservableObject {
         // Increase speed gradually
         increaseSpeed()
 
+        // Dynamic difficulty adjustment based on performance
+        updateDynamicDifficulty()
+
+        // Update weather based on progress
+        updateWeatherProgress()
+
         // Check for score milestone (every 100 points)
         if score > 0 && score % 100 == 0 {
             celebrateScoreMilestone(at: position)
         }
+
+        // Check for streak milestones
+        if consecutiveFoodsWithoutCollision >= 10 {
+            celebrateStreakMilestone(at: position)
+        }
+
+        // Check for boss battle trigger
+        checkBossBattleTrigger()
 
         // Check for growth milestone (every 5 segments)
         let catLength = cat.body.count
@@ -413,6 +495,10 @@ class GameViewModel: ObservableObject {
     }
 
     private func celebrateLevelUp(at position: Position) {
+        // Trigger level up flash
+        triggerFlash(type: .levelUp, intensity: 0.7)
+
+        // Show notification
         // Big screen flash
         screenFlashIntensity = 0.6
 
@@ -436,6 +522,16 @@ class GameViewModel: ObservableObject {
     }
 
     private func celebrateScoreMilestone(at position: Position) {
+        // Trigger achievement flash
+        triggerFlash(type: .achievement, intensity: 0.7)
+
+        // Show toast notification
+        showToast(
+            message: "\(score) Points!",
+            icon: "🎯",
+            type: .milestone
+        )
+
         // Screen flash for milestone
         screenFlashIntensity = 0.4
 
@@ -467,6 +563,57 @@ class GameViewModel: ObservableObject {
         achievementUnlocked = "\(score) Points!"
     }
 
+    private func celebrateStreakMilestone(at position: Position) {
+        // Only celebrate every 10 foods (10, 20, 30, etc.)
+        guard consecutiveFoodsWithoutCollision % 10 == 0 else { return }
+
+        // Trigger scene transition effect
+        milestoneCelebration = true
+
+        // Big screen flash for streak
+        screenFlashIntensity = 0.5
+
+        // Extra screen shake
+        screenShake = CGFloat(min(consecutiveFoodsWithoutCollision / 5, 15))
+
+        // Haptic feedback
+        #if os(iOS)
+        HapticFeedback.success()
+        #endif
+
+        // Spawn rainbow particles for streak
+        let streakColors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple]
+        for _ in 0..<18 {
+            let angle = Double.random(in: 0...(2 * .pi))
+            let speed = Double.random(in: 1.5...3.0)
+            let particle = Particle(
+                position: CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)),
+                velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
+                color: streakColors.randomElement() ?? .yellow,
+                size: CGFloat.random(in: 0.1...0.25),
+                life: 0,
+                maxLife: Double.random(in: 0.5...1.0)
+            )
+            particles.append(particle)
+        }
+
+        // Bonus points for streak
+        let streakBonus = consecutiveFoodsWithoutCollision * 5
+        score += streakBonus
+
+        // Show achievement popup with streak count
+        showingAchievement = true
+        achievementUnlocked = "Streak: \(consecutiveFoodsWithoutCollision)! +\(streakBonus)"
+
+        // Camera zoom for emphasis
+        cameraZoom = 1.12
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            cameraZoom = 1.0
+            milestoneCelebration = false
+        }
+    }
+
     private func spawnParticles(at position: Position, color: Color, count: Int) {
         for _ in 0..<count {
             let angle = Double.random(in: 0...(2 * .pi))
@@ -481,6 +628,19 @@ class GameViewModel: ObservableObject {
             )
             particles.append(particle)
         }
+    }
+
+    private func spawnSpeedParticle(at position: Position, color: Color) {
+        // Create a small trail particle behind the cat
+        let particle = Particle(
+            position: CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)),
+            velocity: CGVector(dx: 0, dy: 0),
+            color: color,
+            size: CGFloat.random(in: 0.08...0.12),
+            life: 0,
+            maxLife: 0.4
+        )
+        particles.append(particle)
     }
 
     private func updateParticles() {
@@ -602,6 +762,9 @@ class GameViewModel: ObservableObject {
         let activePowerUp = ActivePowerUp(type: powerUp.type, duration: powerUp.type.duration)
         activePowerUps.append(activePowerUp)
 
+        // Check for power-up stacking bonus
+        checkPowerUpCombination(newPowerUp: powerUp.type)
+
         // Apply immediate effect based on type
         switch powerUp.type {
         case .speedBoost:
@@ -628,6 +791,7 @@ class GameViewModel: ObservableObject {
         ))
 
         // Screen flash for power-up collection
+        triggerFlash(type: .powerUp, intensity: 0.6)
         screenFlashIntensity = 0.4
 
         // Camera zoom for power-up
@@ -655,7 +819,7 @@ class GameViewModel: ObservableObject {
         }
     }
 
-    private var isInvincible: Bool {
+    var isInvincible: Bool {
         activePowerUps.contains { $0.type == .invincibility }
     }
 
@@ -676,6 +840,11 @@ class GameViewModel: ObservableObject {
         stopTimeTimer()
         gameState = .gameOver
 
+        // Update max combo streak
+        if consecutiveFoodsWithoutCollision > maxComboStreak {
+            maxComboStreak = consecutiveFoodsWithoutCollision
+        }
+
         #if os(iOS)
         HapticFeedback.error()
         #endif
@@ -685,6 +854,9 @@ class GameViewModel: ObservableObject {
         screenShake = 10
         screenFlashIntensity = 0.3
         cameraZoom = 0.9
+
+        // Trigger damage flash
+        triggerFlash(type: .damage, intensity: 0.6)
 
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 300_000_000)
@@ -698,6 +870,16 @@ class GameViewModel: ObservableObject {
             #if os(iOS)
             HapticFeedback.success()
             #endif
+
+            // Trigger victory celebration for new high score
+            if score >= 500 {
+                showVictoryCelebration = true
+            }
+        }
+
+        // Trigger victory flash for good runs
+        if score >= 300 {
+            triggerFlash(type: .victory, intensity: 0.9)
         }
 
         // Update achievements
@@ -750,6 +932,170 @@ class GameViewModel: ObservableObject {
         return Food(position: randomPosition)
     }
 
+    // MARK: - Dynamic Difficulty Adjustment
+    private func updateDynamicDifficulty() {
+        let previousLevel = difficultyLevel
+
+        // Calculate performance metrics
+        let avgCombo = foodEaten > 0 ? Double(score) / Double(foodEaten) : 0
+        let recentPerformance = comboCount >= 3 // Good performance indicator
+
+        // Determine new difficulty level based on score and performance
+        let newLevel: Int
+        if score < 50 {
+            newLevel = 1
+        } else if score < 150 {
+            newLevel = avgCombo > 15 ? 3 : 2
+        } else if score < 300 {
+            newLevel = avgCombo > 20 ? 4 : 3
+        } else if score < 500 {
+            newLevel = avgCombo > 25 ? 5 : 4
+        } else {
+            newLevel = min(avgCombo > 30 ? 6 : 5, 6)
+        }
+
+        // Only update if level changed
+        if newLevel != previousLevel {
+            difficultyLevel = newLevel
+
+            // Show notification for difficulty increase
+            if newLevel > previousLevel {
+                let notifications = [
+                    "Level Up! Speed Increased!",
+                    "Faster! More Obstacles!",
+                    "Challenge Accepted!",
+                    "Getting Intense!",
+                    "Maximum Speed!",
+                    "Ultimate Challenge!"
+                ]
+
+                if newLevel <= notifications.count {
+                    difficultyNotification = notifications[newLevel - 1]
+                    showingAchievement = true
+                    achievementUnlocked = "Difficulty Lv\(newLevel)"
+
+                    // Visual feedback
+                    screenFlashIntensity = 0.3
+                    screenShake = CGFloat(newLevel)
+
+                    #if os(iOS)
+                    HapticFeedback.warning()
+                    #endif
+
+                    // Clear notification after delay
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 2_000_000_000)
+                        difficultyNotification = ""
+                    }
+                }
+            }
+
+            // Apply difficulty modifiers
+            applyDifficultyModifiers(level: newLevel)
+        }
+    }
+
+    private func applyDifficultyModifiers(level: Int) {
+        // Speed increases with difficulty
+        let speedMultiplier = 1.0 - (Double(level) * 0.08) // Up to 48% faster at level 6
+        let baseSpeed = settings.tickInterval / gameMode.speedMultiplier
+        let hasSpeedModifier = activePowerUps.contains { $0.type == .speedBoost || $0.type == .slowMotion }
+
+        if !hasSpeedModifier {
+            currentSpeed = baseSpeed * max(0.5, speedMultiplier)
+            startGameLoop()
+        }
+
+        // Obstacle spawn chance increases with difficulty
+        // (This will be handled in spawnObstaclesIfNeeded)
+    }
+
+    // MARK: - Power-up Combination Effects
+    private func checkPowerUpCombination(newPowerUp: PowerUpType) {
+        let activeTypes = activePowerUps.map { $0.type }
+        let totalCount = activeTypes.count + 1 // Include the new one
+
+        // Check for specific combinations
+        if totalCount >= 2 {
+            // Speed + Invincibility = "Unstoppable"
+            if activeTypes.contains(.speedBoost) && activeTypes.contains(.invincibility) && newPowerUp == .doublePoints {
+                showPowerUpComboNotification(
+                    name: "UNSTOPPABLE!",
+                    description: "Speed + Invincibility + Double Points!",
+                    bonus: 200,
+                    color: .purple
+                )
+            }
+            // Double Points + Speed = "Greedy Cat"
+            else if activeTypes.contains(.doublePoints) && activeTypes.contains(.speedBoost) && newPowerUp == .doublePoints {
+                showPowerUpComboNotification(
+                    name: "GREEDY CAT!",
+                    description: "Triple Points Active!",
+                    bonus: 150,
+                    color: .pink
+                )
+            }
+            // Invincibility + Slow Motion = "Time Lord"
+            else if activeTypes.contains(.invincibility) && activeTypes.contains(.slowMotion) && newPowerUp == .invincibility {
+                showPowerUpComboNotification(
+                    name: "TIME LORD!",
+                    description: "Invincible + Slow Motion!",
+                    bonus: 100,
+                    color: .blue
+                )
+            }
+            // Any 3+ power-ups = "Power Overload"
+            else if totalCount >= 3 {
+                showPowerUpComboNotification(
+                    name: "POWER OVERLOAD!",
+                    description: "\(totalCount) Power-ups Active!",
+                    bonus: totalCount * 50,
+                    color: .orange
+                )
+            }
+        }
+    }
+
+    private func showPowerUpComboNotification(name: String, description: String, bonus: Int, color: Color) {
+        // Add bonus score
+        score += bonus
+
+        // Visual feedback
+        screenFlashIntensity = 0.5
+        screenShake = 10
+        cameraZoom = 1.15
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            cameraZoom = 1.0
+        }
+
+        // Show achievement
+        showingAchievement = true
+        achievementUnlocked = "\(name)\n\(description)\n+\(bonus)"
+
+        #if os(iOS)
+        HapticFeedback.success()
+        #endif
+
+        // Spawn celebratory particles
+        if let headPosition = cat.body.first {
+            for _ in 0..<15 {
+                let angle = Double.random(in: 0...(2 * .pi))
+                let speed = Double.random(in: 2.0...4.0)
+                let particle = Particle(
+                    position: CGPoint(x: CGFloat(headPosition.x), y: CGFloat(headPosition.y)),
+                    velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
+                    color: color,
+                    size: CGFloat.random(in: 0.12...0.3),
+                    life: 0,
+                    maxLife: Double.random(in: 0.6...1.2)
+                )
+                particles.append(particle)
+            }
+        }
+    }
+
     // MARK: - High Score Persistence
     private static func highScoreKey(for mode: GameMode) -> String {
         return "GreedyBlackCatHighScore_\(mode.rawValue)"
@@ -761,6 +1107,255 @@ class GameViewModel: ObservableObject {
 
     private static func saveHighScore(_ score: Int, for mode: GameMode) {
         UserDefaults.standard.set(score, forKey: highScoreKey(for: mode))
+    }
+
+    // MARK: - Weather System
+    private func updateWeatherProgress() {
+        guard showWeatherEffects else { return }
+
+        let previousWeather = currentWeather
+
+        // Weather changes based on score milestones and difficulty
+        switch score {
+        case 0..<100:
+            currentWeather = .sunny
+        case 100..<300:
+            currentWeather = .cloudy
+        case 300..<500:
+            currentWeather = difficultyLevel >= 3 ? .rainy : .cloudy
+        case 500..<800:
+            currentWeather = difficultyLevel >= 4 ? .snowy : .rainy
+        case 800..<1200:
+            currentWeather = difficultyLevel >= 5 ? .stormy : .snowy
+        default:
+            currentWeather = .stormy
+        }
+
+        // Show notification when weather changes
+        if previousWeather != currentWeather {
+            showingAchievement = true
+            achievementUnlocked = "Weather: \(currentWeather.rawValue)"
+
+            #if os(iOS)
+            HapticFeedback.light()
+            #endif
+        }
+    }
+
+    // MARK: - Boss Battle System
+    private func checkBossBattleTrigger() {
+        // Only trigger boss battles at specific milestones
+        guard currentBoss == nil else { return }
+
+        let bossType: BossType?
+        switch score {
+        case 200..<300:
+            bossType = .giantFish
+        case 500..<600:
+            bossType = .ghostCat
+        case 800..<900:
+            bossType = .shadowBeast
+        case 1200..<1300:
+            bossType = .goldenDragon
+        default:
+            bossType = nil
+        }
+
+        if let type = bossType {
+            spawnBoss(type: type)
+        }
+    }
+
+    private func spawnBoss(type: BossType) {
+        // Find a valid spawn position away from the cat
+        let spawnPosition = findBossSpawnPosition()
+
+        let boss = Boss(type: type, position: spawnPosition)
+        currentBoss = boss
+        bossBattleActive = true
+
+        // Show boss spawn notification
+        showingAchievement = true
+        achievementUnlocked = "⚠️ BOSS: \(type.rawValue)!"
+
+        // Visual feedback
+        screenFlashIntensity = 0.6
+        screenShake = 12
+        cameraZoom = 1.2
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            cameraZoom = 1.0
+        }
+
+        #if os(iOS)
+        HapticFeedback.notification(.warning)
+        #endif
+
+        // Start boss attack pattern
+        startBossAttackPattern()
+    }
+
+    private func findBossSpawnPosition() -> Position {
+        // Try to spawn far from the cat
+        let catPos = cat.head
+        let candidates = [
+            Position(x: max(0, catPos.x - 5), y: max(0, catPos.y - 5)),
+            Position(x: min(gridWidth - 1, catPos.x + 5), y: max(0, catPos.y - 5)),
+            Position(x: max(0, catPos.x - 5), y: min(gridHeight - 1, catPos.y + 5)),
+            Position(x: min(gridWidth - 1, catPos.x + 5), y: min(gridHeight - 1, catPos.y + 5))
+        ]
+
+        // Return first valid position that's not occupied
+        for pos in candidates {
+            if !cat.body.contains(pos) && food?.position != pos {
+                return pos
+            }
+        }
+
+        return Position(x: gridWidth / 2, y: gridHeight / 2)
+    }
+
+    private func startBossAttackPattern() {
+        guard let boss = currentBoss else { return }
+
+        // Attack based on boss type
+        switch boss.type.ability {
+        case .dashAttack:
+            scheduleBossAttack(interval: 3.0)
+        case .teleport:
+            scheduleBossAttack(interval: 4.0)
+        case .split:
+            scheduleBossAttack(interval: 5.0)
+        case .fireBreath:
+            scheduleBossAttack(interval: 2.5)
+        }
+    }
+
+    private func scheduleBossAttack(interval: TimeInterval) {
+        Task { @MainActor in
+            while bossBattleActive && currentBoss != nil {
+                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+                if bossBattleActive, let boss = currentBoss {
+                    performBossAttack(boss: boss)
+                }
+            }
+        }
+    }
+
+    private func performBossAttack(boss: Boss) {
+        // Determine attack direction (towards cat)
+        let dx = cat.head.x - boss.position.x
+        let dy = cat.head.y - boss.position.y
+
+        let direction: Direction
+        if abs(dx) > abs(dy) {
+            direction = dx > 0 ? .right : .left
+        } else {
+            direction = dy > 0 ? .down : .up
+        }
+
+        let attack = BossAttack(type: boss.type, position: boss.position, direction: direction, createdAt: Date())
+        bossAttacks.append(attack)
+
+        // Warning effect
+        screenShake = 5
+        #if os(iOS)
+        HapticFeedback.warning()
+        #endif
+    }
+
+    func attackBoss() {
+        guard let boss = currentBoss else { return }
+
+        // Damage boss
+        var damagedBoss = boss
+        damagedBoss.health -= 1
+        currentBoss = damagedBoss
+
+        // Visual feedback
+        screenShake = 8
+        spawnParticles(at: cat.head, color: boss.type.color, count: 12)
+
+        #if os(iOS)
+        HapticFeedback.medium()
+        #endif
+
+        // Check if boss is defeated
+        if damagedBoss.isDefeated {
+            defeatBoss(boss: damagedBoss)
+        }
+    }
+
+    private func defeatBoss(boss: Boss) {
+        bossBattleActive = false
+
+        // Trigger achievement celebration
+        achievementCelebration = true
+        currentAchievement = .bossSlayer
+
+        // Big celebration
+        screenFlashIntensity = 0.8
+        screenShake = 15
+        cameraZoom = 1.25
+
+        // Spawn victory particles
+        for _ in 0..<30 {
+            let angle = Double.random(in: 0...(2 * .pi))
+            let speed = Double.random(in: 2.0...5.0)
+            let particle = Particle(
+                position: CGPoint(x: CGFloat(boss.position.x), y: CGFloat(boss.position.y)),
+                velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
+                color: boss.type.color,
+                size: CGFloat.random(in: 0.15...0.4),
+                life: 0,
+                maxLife: Double.random(in: 0.8...1.5)
+            )
+            particles.append(particle)
+        }
+
+        // Score bonus
+        let bossBonus = boss.type.spawnScore
+        score += bossBonus
+
+        // Show victory notification
+        showingAchievement = true
+        achievementUnlocked = "🎉 \(boss.type.rawValue) DEFEATED!\n+\(bossBonus) pts"
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            cameraZoom = 1.0
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            currentBoss = nil
+        }
+
+        #if os(iOS)
+        HapticFeedback.success()
+        #endif
+    }
+
+    // MARK: - Toast Notification System
+    func showToast(message: String, icon: String, type: ToastType) {
+        toastMessage = message
+        toastIcon = icon
+        toastType = type
+        showToast = true
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            showToast = false
+        }
+    }
+
+    // MARK: - Flash Effects
+    func triggerFlash(type: FlashType, intensity: Double = 0.8) {
+        activeFlashType = type
+        flashIntensity = intensity
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 600_000_000)
+            activeFlashType = nil
+        }
     }
 
     // MARK: - Cleanup

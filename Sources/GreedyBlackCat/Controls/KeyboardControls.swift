@@ -45,7 +45,7 @@ struct KeyboardControls: ViewModifier {
                         viewModel.restartGame()
                     }
                     return .handled
-                case .tab, .carriageReturn:
+                case .tab:
                     viewModel.performDash()
                     return .handled
                 default:

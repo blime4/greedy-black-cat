@@ -26,6 +26,59 @@ struct GameView: View {
                 .overlay(AnimatedBackgroundView())
             #endif
 
+            // Dynamic background based on combo
+            if viewModel.comboCount >= 3 {
+                DynamicBackgroundView(
+                    comboCount: viewModel.comboCount,
+                    difficultyLevel: viewModel.difficultyLevel
+                )
+            }
+
+            // Chromatic aberration on damage/game over
+            if viewModel.gameOverImpact || viewModel.screenShake > 8 {
+                ChromaticAberrationView(intensity: viewModel.gameOverImpact ? 0.8 : Double(viewModel.screenShake) / 20)
+            }
+
+            // Screen distortion on heavy impact
+            if viewModel.screenDistortionActive {
+                ScreenDistortionView(
+                    isActive: viewModel.screenDistortionActive,
+                    distortionIntensity: CGFloat(min(viewModel.screenShake, 15)) / 15
+                )
+            }
+
+            // Neon glow for mega combos
+            if viewModel.neonGlowActive {
+                NeonGlowView(
+                    comboCount: viewModel.comboCount,
+                    isActive: true
+                )
+            }
+
+            // Beat sync visualizer
+            if viewModel.beatSyncActive && viewModel.gameState == .playing {
+                BeatSyncVisualizer(
+                    beatValue: viewModel.gamePulse,
+                    isActive: true
+                )
+            }
+
+            // Weather system overlay
+            if viewModel.showWeatherEffects && viewModel.gameState == .playing {
+                GeometryReader { geometry in
+                    WeatherSystemView(
+                        weatherType: viewModel.currentWeather,
+                        screenSize: geometry.size
+                    )
+                }
+            }
+
+            // Time warp effect
+            TimeWarpView(
+                isActive: viewModel.activePowerUps.contains { $0.type == .slowMotion },
+                intensity: 0.8
+            )
+
             VStack(spacing: 0) {
                 // HUD
                 hudView
@@ -34,11 +87,25 @@ struct GameView: View {
                 // Game Grid
                 gameGridView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay(
+                        // Speed lines during dash
+                        SpeedLinesOverlay(
+                            isActive: viewModel.isDashing,
+                            direction: viewModel.cat.direction,
+                            intensity: viewModel.comboCount >= 5 ? 1.0 : 0.6
+                        )
+                    )
+                    .timeWarpEffect(
+                        isActive: viewModel.activePowerUps.contains { $0.type == .slowMotion },
+                        intensity: 0.8
+                    )
                     .scaleEffect(viewModel.cameraZoom)
                     .grayscale(viewModel.gameOverImpact ? 0.5 : 0)
                     .opacity(viewModel.gameOverImpact ? 0.8 : 1.0)
-                    .offset(x: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake),
-                            y: viewModel.screenShake == 0 ? 0 : CGFloat.random(in: -viewModel.screenShake...viewModel.screenShake))
+                    .offset(
+                        x: directionalShakeOffset(direction: viewModel.cat.direction, isX: true),
+                        y: directionalShakeOffset(direction: viewModel.cat.direction, isX: false)
+                    )
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.cameraZoom)
                     .animation(.easeOut(duration: 0.3), value: viewModel.gameOverImpact)
 
@@ -67,6 +134,34 @@ struct GameView: View {
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
+            // Mini-map and compass
+            if viewModel.gameState == .playing {
+                VStack(spacing: 8) {
+                    // Compass indicator
+                    if let food = viewModel.food {
+                        CompassIndicator(
+                            direction: viewModel.cat.direction,
+                            catPosition: viewModel.cat.head,
+                            foodPosition: food.position
+                        )
+                    }
+
+                    // Mini-map
+                    MiniMapView(
+                        catPosition: viewModel.cat.head,
+                        foodPosition: viewModel.food?.position,
+                        powerUps: viewModel.powerUps,
+                        obstacles: viewModel.obstacles,
+                        boss: viewModel.currentBoss,
+                        gridWidth: viewModel.gridWidth,
+                        gridHeight: viewModel.gridHeight
+                    )
+                }
+                .padding(.trailing)
+                .padding(.top, 60)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+
             // Combo Multiplier Popup
             if viewModel.showComboPopup {
                 ComboMultiplierPopup(multiplier: viewModel.comboMultiplier)
@@ -86,6 +181,59 @@ struct GameView: View {
                     achievementIcon: "🏆",
                     flashIntensity: viewModel.screenFlashIntensity
                 )
+            }
+
+            // Scene transition for milestones
+            if viewModel.milestoneCelebration {
+                SceneTransitionView(isActive: true, transitionType: .ripple)
+            }
+
+            // Achievement celebration
+            if viewModel.achievementCelebration {
+                AchievementCelebrationView(
+                    isActive: viewModel.achievementCelebration,
+                    achievementType: viewModel.currentAchievement
+                )
+            }
+
+            // Multi-color flash effects
+            if let flashType = viewModel.activeFlashType {
+                MultiColorFlashView(
+                    flashType: flashType,
+                    intensity: viewModel.flashIntensity
+                )
+            }
+
+            // Holographic effect for special events
+            if viewModel.holographicEffectActive {
+                HolographicEffectView(
+                    intensity: 0.8
+                )
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            }
+
+            // Victory celebration
+            if viewModel.showVictoryCelebration {
+                VictoryCelebrationView(
+                    score: viewModel.score,
+                    isNewHighScore: viewModel.score >= viewModel.highScore && viewModel.score > 0,
+                    onContinue: {
+                        viewModel.showVictoryCelebration = false
+                        viewModel.restartGame()
+                    }
+                )
+            }
+
+            // Toast notification
+            if viewModel.showToast {
+                ToastNotificationView(
+                    message: viewModel.toastMessage,
+                    icon: viewModel.toastIcon,
+                    type: viewModel.toastType
+                )
+                .padding(.top, 80)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
 
             // Border glow effect for special events
@@ -175,6 +323,49 @@ struct GameView: View {
                 )
             }
 
+            // Difficulty indicator
+            if viewModel.difficultyLevel > 1 {
+                HStack(spacing: 4) {
+                    Image(systemName: "speedometer.fill")
+                        .font(.caption)
+                        .foregroundColor(difficultyColor)
+                    Text("Lv\(viewModel.difficultyLevel)")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(difficultyColor)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(difficultyColor.opacity(0.2))
+                )
+            }
+
+            // Weather indicator
+            if viewModel.showWeatherEffects {
+                Button(action: {
+                    viewModel.showWeatherEffects.toggle()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: viewModel.currentWeather.icon)
+                            .font(.caption)
+                            .foregroundColor(weatherIconColor)
+                        Text(viewModel.currentWeather.rawValue)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(weatherIconColor)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(weatherIconColor.opacity(0.15))
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+
             Spacer()
 
             // High Score
@@ -217,7 +408,7 @@ struct GameView: View {
             let cellSize = gridSize / CGFloat(max(viewModel.gridWidth, viewModel.gridHeight))
 
             ZStack {
-                // Grid background with gradient
+                // Grid background with gradient and rhythmic pulse
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
@@ -231,6 +422,8 @@ struct GameView: View {
                     )
                     .frame(width: cellSize * CGFloat(viewModel.gridWidth),
                            height: cellSize * CGFloat(viewModel.gridHeight))
+                    .scaleEffect(1.0 + (viewModel.gamePulse * 0.003))
+                    .animation(.easeInOut(duration: 0.1), value: viewModel.gamePulse)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
 
                 // Draw grid lines
@@ -264,6 +457,39 @@ struct GameView: View {
                         )
                 }
 
+                // Boss (if active)
+                if let boss = viewModel.currentBoss {
+                    BossView(boss: boss, cellSize: cellSize)
+                        .position(
+                            x: CGFloat(boss.position.x) * cellSize + cellSize / 2,
+                            y: CGFloat(boss.position.y) * cellSize + cellSize / 2
+                        )
+                        .onTapGesture {
+                            viewModel.attackBoss()
+                        }
+                }
+
+                // Boss attacks
+                ForEach(viewModel.bossAttacks) { attack in
+                    BossAttackView(attack: attack, cellSize: cellSize)
+                        .position(
+                            x: CGFloat(attack.position.x) * cellSize + cellSize / 2,
+                            y: CGFloat(attack.position.y) * cellSize + cellSize / 2
+                        )
+                }
+
+                // Combo chain effect
+                if viewModel.comboCount >= 3 {
+                    ComboChainView(
+                        comboCount: viewModel.comboCount,
+                        cellSize: cellSize,
+                        catPosition: CGPoint(
+                            x: CGFloat(viewModel.cat.head.x) * cellSize + cellSize / 2,
+                            y: CGFloat(viewModel.cat.head.y) * cellSize + cellSize / 2
+                        )
+                    )
+                }
+
                 // Cat body
                 ForEach(Array(viewModel.cat.body.enumerated()), id: \.offset) { index, position in
                     CatSegmentView(
@@ -272,7 +498,8 @@ struct GameView: View {
                         cellSize: cellSize,
                         comboCount: viewModel.comboCount,
                         isInvincible: viewModel.isInvincible,
-                        gameMode: viewModel.gameMode
+                        gameMode: viewModel.gameMode,
+                        isEating: viewModel.isEating
                     )
                     .position(
                         x: CGFloat(position.x) * cellSize + cellSize / 2,
@@ -280,19 +507,39 @@ struct GameView: View {
                     )
                 }
 
-                // Ghost trail effect with fire color during high combos
-                ForEach(viewModel.trailPoints) { trailPoint in
-                    let trailColor: Color = viewModel.comboCount >= 3 ? .orange : Color.accentColor
-                    let trailAlpha = trailPoint.alpha * (viewModel.comboCount >= 3 ? 0.5 : 0.3)
+                // Enhanced ribbon trail effect
+                if viewModel.comboCount >= 2 {
+                    RibbonTrailView(
+                        trailPoints: viewModel.trailPoints,
+                        comboCount: viewModel.comboCount,
+                        cellSize: cellSize
+                    )
+                } else {
+                    // Simple ghost trail for low combos
+                    ForEach(viewModel.trailPoints) { trailPoint in
+                        let trailColor: Color = viewModel.comboCount >= 3 ? .orange : Color.accentColor
+                        let trailAlpha = trailPoint.alpha * (viewModel.comboCount >= 3 ? 0.5 : 0.3)
 
-                    Circle()
-                        .fill(trailColor.opacity(trailAlpha))
-                        .frame(width: cellSize * 0.6, height: cellSize * 0.6)
-                        .blur(radius: viewModel.comboCount >= 3 ? 6 : 4)
-                        .position(
-                            x: CGFloat(trailPoint.position.x) * cellSize + cellSize / 2,
-                            y: CGFloat(trailPoint.position.y) * cellSize + cellSize / 2
-                        )
+                        Circle()
+                            .fill(trailColor.opacity(trailAlpha))
+                            .frame(width: cellSize * 0.6, height: cellSize * 0.6)
+                            .blur(radius: viewModel.comboCount >= 3 ? 6 : 4)
+                            .position(
+                                x: CGFloat(trailPoint.position.x) * cellSize + cellSize / 2,
+                                y: CGFloat(trailPoint.position.y) * cellSize + cellSize / 2
+                            )
+                    }
+                }
+
+                // Danger zone indicators
+                if !viewModel.obstacles.isEmpty {
+                    DangerZoneView(
+                        obstacles: viewModel.obstacles,
+                        catPosition: viewModel.cat.head,
+                        gridWidth: viewModel.gridWidth,
+                        gridHeight: viewModel.gridHeight,
+                        cellSize: cellSize
+                    )
                 }
 
                 // Score popups
@@ -323,10 +570,37 @@ struct GameView: View {
 
                 // Hit effects (ripple/shockwave)
                 ForEach(viewModel.hitEffects) { effect in
-                    ShockwaveView(position: CGPoint(
-                        x: effect.position.x * cellSize + cellSize / 2,
-                        y: effect.position.y * cellSize + cellSize / 2
-                    ), color: effect.color)
+                    RippleShockwaveView(
+                        position: CGPoint(
+                            x: effect.position.x * cellSize + cellSize / 2,
+                            y: effect.position.y * cellSize + cellSize / 2
+                        ),
+                        color: effect.color,
+                        maxRadius: 150,
+                        duration: 0.8
+                    )
+                }
+
+                // Vortex suction for magnetic food
+                if let food = viewModel.food, let catHead = viewModel.cat.body.first {
+                    let foodPos = CGPoint(
+                        x: CGFloat(food.position.x) * cellSize + cellSize / 2,
+                        y: CGFloat(food.position.y) * cellSize + cellSize / 2
+                    )
+                    let catPos = CGPoint(
+                        x: CGFloat(catHead.x) * cellSize + cellSize / 2,
+                        y: CGFloat(catHead.y) * cellSize + cellSize / 2
+                    )
+                    let distance = sqrt(pow(foodPos.x - catPos.x, 2) + pow(foodPos.y - catPos.y, 2))
+
+                    if distance < cellSize * 3 {
+                        VortexSuctionView(
+                            foodPosition: foodPos,
+                            catPosition: catPos,
+                            cellSize: cellSize,
+                            isActive: true
+                        )
+                    }
                 }
             }
             .frame(width: gridSize, height: gridSize)
@@ -664,6 +938,28 @@ private extension GameView {
         }
     }
 
+    var difficultyColor: Color {
+        switch viewModel.difficultyLevel {
+        case 1: return .green
+        case 2: return .blue
+        case 3: return .yellow
+        case 4: return .orange
+        case 5: return .red
+        case 6: return .purple
+        default: return .gray
+        }
+    }
+
+    var weatherIconColor: Color {
+        switch viewModel.currentWeather {
+        case .sunny: return .yellow
+        case .rainy: return .blue
+        case .snowy: return .cyan
+        case .stormy: return .purple
+        case .cloudy: return .gray
+        }
+    }
+
     var borderGlowColor: Color {
         if viewModel.isInvincible {
             return .purple
@@ -686,6 +982,26 @@ private extension GameView {
             return CGFloat(viewModel.comboCount)
         }
         return 0
+    }
+
+    func directionalShakeOffset(direction: Direction, isX: Bool) -> CGFloat {
+        guard viewModel.screenShake > 0 else { return 0 }
+
+        let baseShake = CGFloat.random(in: 0...viewModel.screenShake)
+        let randomMultiplier = CGFloat.random(in: -1...1)
+
+        switch direction {
+        case .up:
+            // Shake more vertically, less horizontally
+            return isX ? baseShake * 0.3 * randomMultiplier : -baseShake * abs(randomMultiplier)
+        case .down:
+            return isX ? baseShake * 0.3 * randomMultiplier : baseShake * abs(randomMultiplier)
+        case .left:
+            // Shake more horizontally, less vertically
+            return isX ? -baseShake * abs(randomMultiplier) : baseShake * 0.3 * randomMultiplier
+        case .right:
+            return isX ? baseShake * abs(randomMultiplier) : baseShake * 0.3 * randomMultiplier
+        }
     }
 }
 

@@ -38,7 +38,7 @@ struct SpeedLine: View {
         RoundedRectangle(cornerRadius: 2)
             .fill(Color.white.opacity(0.5))
             .frame(width: lineWidth, height: lineHeight)
-            .offset(lineOffset)
+            .offset(computedOffset)
             .rotationEffect(.degrees(rotationAngle))
     }
 
@@ -48,6 +48,15 @@ struct SpeedLine: View {
 
     private var lineHeight: CGFloat {
         gridSize * 0.3
+    }
+
+    private var computedOffset: CGSize {
+        switch direction {
+        case .up: return CGSize(width: 0, height: -offset)
+        case .down: return CGSize(width: 0, height: offset)
+        case .left: return CGSize(width: -offset, height: 0)
+        case .right: return CGSize(width: offset, height: 0)
+        }
     }
 
     private var rotationAngle: Double {
