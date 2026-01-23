@@ -973,6 +973,10 @@ class GameViewModel: ObservableObject {
         HapticFeedback.success()
         #endif
 
+        // Add bonus points for collecting power-up
+        let powerUpBonus = 50
+        score += powerUpBonus
+
         let activePowerUp = ActivePowerUp(type: powerUp.type, duration: powerUp.type.duration)
         activePowerUps.append(activePowerUp)
 
