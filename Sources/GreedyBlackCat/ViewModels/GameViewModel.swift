@@ -87,6 +87,7 @@ class GameViewModel: ObservableObject {
     // MARK: - Task Storage
     nonisolated(unsafe) private var activeTasks: Set<Task<Void, Never>> = []
     private var bossAttackTask: Task<Void, Never>?
+    private var achievementHideTask: Task<Void, Never>?
 
     // Track which bosses have been defeated to prevent re-triggering
     private var defeatedBossTypes: Set<BossType> = []
@@ -283,6 +284,8 @@ class GameViewModel: ObservableObject {
         activeTasks.removeAll()
         bossAttackTask?.cancel()
         bossAttackTask = nil
+        achievementHideTask?.cancel()
+        achievementHideTask = nil
     }
 
     deinit {
@@ -431,14 +434,16 @@ class GameViewModel: ObservableObject {
         // Clean up expired boss attacks
         bossAttacks.removeAll { $0.isExpired }
 
-        // Hide achievement popup after delay
-        if showingAchievement {
+        // Hide achievement popup after delay (only schedule once)
+        if showingAchievement && achievementHideTask == nil {
             let task = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 if !Task.isCancelled {
                     showingAchievement = false
+                    achievementHideTask = nil
                 }
             }
+            achievementHideTask = task
             addTask(task)
         }
 
