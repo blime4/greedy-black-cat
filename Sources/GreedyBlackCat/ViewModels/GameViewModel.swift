@@ -88,6 +88,7 @@ class GameViewModel: ObservableObject {
     nonisolated(unsafe) private var activeTasks: Set<Task<Void, Never>> = []
     private var bossAttackTask: Task<Void, Never>?
     private var achievementHideTask: Task<Void, Never>?
+    private var toastHideTask: Task<Void, Never>?
 
     // Track which bosses have been defeated to prevent re-triggering
     private var defeatedBossTypes: Set<BossType> = []
@@ -286,6 +287,8 @@ class GameViewModel: ObservableObject {
         bossAttackTask = nil
         achievementHideTask?.cancel()
         achievementHideTask = nil
+        toastHideTask?.cancel()
+        toastHideTask = nil
     }
 
     deinit {
@@ -1708,6 +1711,10 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Toast Notification System
     func showToast(message: String, icon: String, type: ToastType) {
+        // Cancel any existing toast hide task
+        toastHideTask?.cancel()
+        toastHideTask = nil
+
         toastMessage = message
         toastIcon = icon
         toastType = type
@@ -1715,10 +1722,11 @@ class GameViewModel: ObservableObject {
 
         let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 3_000_000_000)
-            if !Task.isCancelled {
-                showToast = false
-            }
+            guard !Task.isCancelled else { return }
+            showToast = false
+            toastHideTask = nil
         }
+        toastHideTask = task
         addTask(task)
     }
 
