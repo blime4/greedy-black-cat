@@ -1731,8 +1731,8 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Toast Notification System
     func showToast(message: String, icon: String, type: ToastType) {
-        // Validate message is not empty
-        guard !message.isEmpty else { return }
+        // Validate message and icon are not empty
+        guard !message.isEmpty && !icon.isEmpty else { return }
 
         // Cancel any existing toast hide task
         toastHideTask?.cancel()
