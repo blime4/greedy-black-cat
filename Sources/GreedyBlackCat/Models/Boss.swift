@@ -65,7 +65,7 @@ struct Boss {
     var position: Position
     var health: Int
     var maxHealth: Int
-    let id = UUID()
+    let id: UUID
     var isActive: Bool = true
 
     init(type: BossType, position: Position) {
@@ -73,6 +73,7 @@ struct Boss {
         self.position = position
         self.health = type.health
         self.maxHealth = type.health
+        self.id = UUID()
     }
 
     var healthPercentage: Double {
