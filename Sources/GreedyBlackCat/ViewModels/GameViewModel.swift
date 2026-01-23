@@ -1656,6 +1656,10 @@ class GameViewModel: ObservableObject {
     func attackBoss() {
         guard let boss = currentBoss else { return }
 
+        // Validate boss is still alive and position is valid
+        guard !boss.isDefeated else { return }
+        guard boss.position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Damage boss
         var damagedBoss = boss
         damagedBoss.health -= 1
