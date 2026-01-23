@@ -1165,7 +1165,8 @@ class GameViewModel: ObservableObject {
                 let pos = Position(x: x, y: y)
                 if !cat.body.contains(pos) &&
                    !obstacles.contains(where: { $0.position == pos }) &&
-                   !powerUps.contains(where: { $0.position == pos }) {
+                   !powerUps.contains(where: { $0.position == pos }) &&
+                   currentBoss?.position != pos {
                     validPositions.append(pos)
                 }
             }
