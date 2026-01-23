@@ -1525,6 +1525,11 @@ class GameViewModel: ObservableObject {
     }
 
     private func findBossSpawnPosition() -> Position {
+        // Validate grid dimensions
+        guard gridWidth > 0 && gridHeight > 0 else {
+            return Position(x: 0, y: 0)
+        }
+
         // Try to spawn far from the cat
         let catPos = cat.head
         let candidates = [
