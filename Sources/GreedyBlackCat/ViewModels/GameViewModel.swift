@@ -89,6 +89,7 @@ class GameViewModel: ObservableObject {
     private var bossAttackTask: Task<Void, Never>?
     private var achievementHideTask: Task<Void, Never>?
     private var toastHideTask: Task<Void, Never>?
+    private var flashHideTask: Task<Void, Never>?
 
     // Track which bosses have been defeated to prevent re-triggering
     private var defeatedBossTypes: Set<BossType> = []
@@ -289,6 +290,8 @@ class GameViewModel: ObservableObject {
         achievementHideTask = nil
         toastHideTask?.cancel()
         toastHideTask = nil
+        flashHideTask?.cancel()
+        flashHideTask = nil
     }
 
     deinit {
@@ -1752,15 +1755,20 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Flash Effects
     func triggerFlash(type: FlashType, intensity: Double = 0.8) {
+        // Cancel any existing flash hide task
+        flashHideTask?.cancel()
+        flashHideTask = nil
+
         activeFlashType = type
         flashIntensity = intensity
 
         let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 600_000_000)
-            if !Task.isCancelled {
-                activeFlashType = nil
-            }
+            guard !Task.isCancelled else { return }
+            activeFlashType = nil
+            flashHideTask = nil
         }
+        flashHideTask = task
         addTask(task)
     }
 }
