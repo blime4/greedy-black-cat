@@ -14,6 +14,7 @@ struct CatSegmentView: View {
     @State private var isGlowing = false
     @State private var eyePulse: CGFloat = 1.0
     @State private var jawOpen: CGFloat = 0
+    @State private var jawTask: Task<Void, Never>?
 
     private var emotion: CatEmotion {
         if isInvincible {
@@ -71,13 +72,21 @@ struct CatSegmentView: View {
         }
         .onChange(of: isEating) { _, newValue in
             if newValue && isHead {
+                // Cancel any existing jaw animation task
+                jawTask?.cancel()
+
                 // Trigger jaw chomp animation
                 withAnimation(.easeOut(duration: 0.1)) {
                     jawOpen = 1.0
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation(.easeIn(duration: 0.1)) {
-                        jawOpen = 0
+
+                // Schedule jaw closing with cancellable task
+                jawTask = Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                    if !Task.isCancelled {
+                        withAnimation(.easeIn(duration: 0.1)) {
+                            jawOpen = 0
+                        }
                     }
                 }
             }
