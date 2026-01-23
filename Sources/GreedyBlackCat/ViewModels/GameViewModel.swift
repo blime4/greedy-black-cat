@@ -749,6 +749,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func spawnObstacle() {
+        // Respect max obstacle limit for current game mode
+        guard obstacles.count < gameMode.maxObstacles else { return }
+
         let types: [ObstacleType] = [.rock, .spike, .ice]
         guard let type = types.randomElement() else { return }
 
