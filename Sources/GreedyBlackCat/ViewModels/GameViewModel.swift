@@ -394,7 +394,10 @@ class GameViewModel: ObservableObject {
 
         // Add speed particles during high combos
         if comboCount >= 3 {
-            spawnSpeedParticle(at: cat.head, color: comboCount >= Self.maxComboMultiplier ? .yellow : .orange)
+            // Validate head position before spawning particles
+            if cat.head.isInBounds(width: gridWidth, height: gridHeight) {
+                spawnSpeedParticle(at: cat.head, color: comboCount >= Self.maxComboMultiplier ? .yellow : .orange)
+            }
         }
 
         // Check food collision (ignore invalid positions)
