@@ -22,7 +22,7 @@ struct TrailSystem {
     mutating func update(decayRate: Double) -> [TrailPoint] {
         let now = Date()
         points = points.filter { point in
-            now.timeIntervalSince(point.createdAt) < 1.0
+            now.timeIntervalSince(point.createdAt) < decayRate
         }
         return points
     }
