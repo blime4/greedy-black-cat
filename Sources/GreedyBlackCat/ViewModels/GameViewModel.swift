@@ -1530,6 +1530,9 @@ class GameViewModel: ObservableObject {
     private func defeatBoss(boss: Boss) {
         bossBattleActive = false
 
+        // Clear all boss attacks
+        bossAttacks.removeAll()
+
         // Trigger achievement celebration
         achievementCelebration = true
         currentAchievement = .bossSlayer
