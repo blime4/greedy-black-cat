@@ -845,6 +845,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func spawnSpeedParticle(at position: Position, color: Color) {
+        // Validate position is within bounds
+        guard position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Create a small trail particle behind the cat
         let particle = Particle(
             position: CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)),
