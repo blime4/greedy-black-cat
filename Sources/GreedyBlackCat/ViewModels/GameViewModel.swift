@@ -1425,7 +1425,24 @@ class GameViewModel: ObservableObject {
             }
         }
 
-        return Position(x: gridWidth / 2, y: gridHeight / 2)
+        // Fallback to center position, but validate it first
+        let centerPos = Position(x: gridWidth / 2, y: gridHeight / 2)
+        if !cat.body.contains(centerPos) && food?.position != centerPos {
+            return centerPos
+        }
+
+        // Last resort: try any position (game might be ending)
+        for x in 0..<gridWidth {
+            for y in 0..<gridHeight {
+                let pos = Position(x: x, y: y)
+                if !cat.body.contains(pos) && food?.position != pos {
+                    return pos
+                }
+            }
+        }
+
+        // Emergency fallback
+        return Position(x: 0, y: 0)
     }
 
     private func startBossAttackPattern() {
