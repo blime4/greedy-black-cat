@@ -909,7 +909,7 @@ class GameViewModel: ObservableObject {
         activePowerUps.contains { $0.type == .invincibility }
     }
 
-    private var isDoublePoints: Bool {
+    var isDoublePoints: Bool {
         activePowerUps.contains { $0.type == .doublePoints }
     }
 
