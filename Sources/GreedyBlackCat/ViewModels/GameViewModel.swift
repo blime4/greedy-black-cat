@@ -737,6 +737,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func celebrateScoreMilestone(at position: Position) {
+        // Validate position is within bounds
+        guard position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Trigger achievement flash
         triggerFlash(type: .achievement, intensity: 0.7)
 
