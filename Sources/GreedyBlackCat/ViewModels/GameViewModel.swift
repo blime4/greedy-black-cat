@@ -1423,16 +1423,16 @@ class GameViewModel: ObservableObject {
             Position(x: min(gridWidth - 1, catPos.x + 5), y: min(gridHeight - 1, catPos.y + 5))
         ]
 
-        // Return first valid position that's not occupied
+        // Return first valid position that's not occupied (including obstacles)
         for pos in candidates {
-            if !cat.body.contains(pos) && food?.position != pos {
+            if !cat.body.contains(pos) && food?.position != pos && !obstacles.contains(where: { $0.position == pos }) {
                 return pos
             }
         }
 
         // Fallback to center position, but validate it first
         let centerPos = Position(x: gridWidth / 2, y: gridHeight / 2)
-        if !cat.body.contains(centerPos) && food?.position != centerPos {
+        if !cat.body.contains(centerPos) && food?.position != centerPos && !obstacles.contains(where: { $0.position == centerPos }) {
             return centerPos
         }
 
@@ -1440,7 +1440,7 @@ class GameViewModel: ObservableObject {
         for x in 0..<gridWidth {
             for y in 0..<gridHeight {
                 let pos = Position(x: x, y: y)
-                if !cat.body.contains(pos) && food?.position != pos {
+                if !cat.body.contains(pos) && food?.position != pos && !obstacles.contains(where: { $0.position == pos }) {
                     return pos
                 }
             }
