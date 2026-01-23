@@ -20,6 +20,9 @@ struct TrailSystem {
     }
 
     mutating func update(decayRate: Double) -> [TrailPoint] {
+        // Guard against invalid decay rate
+        guard decayRate > 0 else { return points }
+
         let now = Date()
         points = points.filter { point in
             now.timeIntervalSince(point.createdAt) < decayRate
