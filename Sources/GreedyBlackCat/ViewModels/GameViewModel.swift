@@ -235,6 +235,11 @@ class GameViewModel: ObservableObject {
         achievementUnlocked = "🎉 GRID COMPLETE! 🎉"
         showingAchievement = true
 
+        // Reset visual effects
+        cameraZoom = 1.0
+        screenShake = 0
+        screenFlashIntensity = 0
+
         // Save high score on victory
         if score > highScore {
             highScore = score
