@@ -707,6 +707,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func celebrateLevelUp(at position: Position) {
+        // Validate position is within bounds
+        guard position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Trigger level up flash
         triggerFlash(type: .levelUp, intensity: 0.7)
 
