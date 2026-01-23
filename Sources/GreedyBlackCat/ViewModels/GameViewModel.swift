@@ -164,7 +164,10 @@ class GameViewModel: ObservableObject {
         inputQueue = []
         comboCount = 0
         lastEatTime = nil
+        maxComboStreak = 0
         consecutiveFoodsWithoutCollision = 0
+        difficultyLevel = 1
+        difficultyNotification = ""
         scorePopups = []
         powerUps = []
         activePowerUps = []
