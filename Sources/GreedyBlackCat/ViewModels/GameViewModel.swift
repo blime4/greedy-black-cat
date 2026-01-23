@@ -389,6 +389,17 @@ class GameViewModel: ObservableObject {
             gameOver()
         }
 
+        // Check boss attack collision (unless invincible)
+        if !isInvincible {
+            for attack in bossAttacks {
+                if checkBossAttackCollision(attack: attack, catPosition: cat.head) {
+                    // Boss attack hits the player
+                    gameOver()
+                    return
+                }
+            }
+        }
+
         // Decay screen shake
         if screenShake > 0 {
             screenShake = max(0, screenShake - 1)
@@ -1503,6 +1514,62 @@ class GameViewModel: ObservableObject {
         #if os(iOS)
         HapticFeedback.warning()
         #endif
+    }
+
+    private func checkBossAttackCollision(attack: BossAttack, catPosition: Position) -> Bool {
+        // Calculate attack progress (0.0 to 1.0 based on 2 second duration)
+        let elapsed = Date().timeIntervalSince(attack.createdAt)
+        let progress = min(max(elapsed / 2.0, 0.0), 1.0)
+
+        // Skip collision if attack hasn't started (too early)
+        guard progress > 0.1 else { return false }
+
+        switch attack.type.ability {
+        case .dashAttack:
+            // Check if cat is in the dash direction from attack position
+            return checkDirectionalCollision(attack: attack, catPosition: catPosition, maxDistance: 6)
+
+        case .fireBreath:
+            // Check if cat is in the fire breath direction (shorter range, wider)
+            return checkDirectionalCollision(attack: attack, catPosition: catPosition, maxDistance: 4, allowDiagonal: true)
+
+        case .teleport:
+            // Area attack: check if cat is within radius
+            let distance = Double(attack.position.distance(to: catPosition))
+            return distance <= 2.5
+
+        case .split:
+            // Expanding area attack: check if cat is within expanding radius
+            let distance = Double(attack.position.distance(to: catPosition))
+            let maxRadius = 3.0 * progress
+            return distance <= maxRadius
+        }
+    }
+
+    private func checkDirectionalCollision(attack: BossAttack, catPosition: Position, maxDistance: Int, allowDiagonal: Bool = false) -> Bool {
+        let dx = catPosition.x - attack.position.x
+        let dy = catPosition.y - attack.position.y
+
+        switch attack.direction {
+        case .up:
+            if dy <= 0 && abs(dx) <= (allowDiagonal ? abs(dy) : 1) && abs(dy) <= maxDistance {
+                return true
+            }
+        case .down:
+            if dy >= 0 && abs(dx) <= (allowDiagonal ? dy : 1) && dy <= maxDistance {
+                return true
+            }
+        case .left:
+            if dx <= 0 && abs(dy) <= (allowDiagonal ? abs(dx) : 1) && abs(dx) <= maxDistance {
+                return true
+            }
+        case .right:
+            if dx >= 0 && abs(dy) <= (allowDiagonal ? dx : 1) && dx <= maxDistance {
+                return true
+            }
+        }
+
+        return false
     }
 
     func attackBoss() {
