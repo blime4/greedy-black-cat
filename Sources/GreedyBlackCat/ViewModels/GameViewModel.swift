@@ -434,9 +434,10 @@ class GameViewModel: ObservableObject {
         }
         lastEatTime = now
 
-        // Calculate score with combo multiplier
+        // Calculate score with combo multiplier and double points power-up
         let comboMultiplier = min(comboCount, Self.maxComboMultiplier)
-        let points = currentFood.points * comboMultiplier
+        let doublePointsMultiplier: Int = isDoublePoints ? 2 : 1
+        let points = currentFood.points * comboMultiplier * doublePointsMultiplier
         score += points
 
         // Holographic effect for rare food (large fish)
