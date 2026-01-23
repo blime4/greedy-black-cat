@@ -185,6 +185,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func victory() {
+        // Guard against multiple victory calls in same tick
+        guard gameState == .playing else { return }
+
         stopGameLoop()
         stopTimeTimer()
         gameState = .gameOver
@@ -912,6 +915,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func gameOver() {
+        // Guard against multiple game over calls in same tick
+        guard gameState == .playing else { return }
+
         stopGameLoop()
         stopTimeTimer()
         gameState = .gameOver
