@@ -337,8 +337,8 @@ class GameViewModel: ObservableObject {
             spawnSpeedParticle(at: cat.head, color: comboCount >= Self.maxComboMultiplier ? .yellow : .orange)
         }
 
-        // Check food collision
-        let ateFood = food?.position == newPosition
+        // Check food collision (ignore invalid positions)
+        let ateFood = food?.position == newPosition && food?.position.x != -1
         cat.move(to: newPosition, grow: ateFood)
 
         if ateFood {
