@@ -770,7 +770,8 @@ class GameViewModel: ObservableObject {
         #endif
 
         // Spawn gold particles for score milestone
-        for _ in 0..<12 {
+        let particleCount = min(12, max(0, 100 - particles.count))
+        for _ in 0..<particleCount {
             let angle = Double.random(in: 0...(2 * .pi))
             let speed = Double.random(in: 1.0...2.5)
             let particle = Particle(
