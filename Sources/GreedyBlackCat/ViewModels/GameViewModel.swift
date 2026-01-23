@@ -1116,6 +1116,10 @@ class GameViewModel: ObservableObject {
         achievementHideTask?.cancel()
         achievementHideTask = nil
 
+        // Clear score popups and hit effects
+        scorePopups.removeAll()
+        hitEffects.removeAll()
+
         // Stop boss battle if active
         bossBattleActive = false
         currentBoss = nil
