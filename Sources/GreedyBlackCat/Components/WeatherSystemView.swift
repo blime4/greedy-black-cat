@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct WeatherSystemView: View {
     let weatherType: WeatherType
@@ -9,6 +10,8 @@ struct WeatherSystemView: View {
     @State private var clouds: [Cloud] = []
     @State private var lightningOpacity: Double = 0
     @State private var isStorming = false
+
+    @State private var cancellables = Set<AnyCancellable>()
 
     var body: some View {
         ZStack {
@@ -33,7 +36,11 @@ struct WeatherSystemView: View {
         .onAppear {
             initializeWeather()
         }
+        .onDisappear {
+            cancellables.removeAll()
+        }
         .onChange(of: weatherType) { _, newType in
+            cancellables.removeAll()
             updateWeather(for: newType)
         }
     }
@@ -196,57 +203,63 @@ struct WeatherSystemView: View {
 
     // MARK: - Animation Controllers
     private func startRain() {
-        Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
-            if raindrops.count < 100 {
-                let drop = Raindrop(
-                    position: CGPoint(
-                        x: CGFloat.random(in: 0...screenSize.width),
-                        y: -20
-                    ),
-                    length: CGFloat.random(in: 10...20),
-                    opacity: Double.random(in: 0.3...0.6),
-                    speed: CGFloat.random(in: 15...25)
-                )
-                raindrops.append(drop)
-            }
+        Timer.publish(every: 0.016, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                if raindrops.count < 100 {
+                    let drop = Raindrop(
+                        position: CGPoint(
+                            x: CGFloat.random(in: 0...screenSize.width),
+                            y: -20
+                        ),
+                        length: CGFloat.random(in: 10...20),
+                        opacity: Double.random(in: 0.3...0.6),
+                        speed: CGFloat.random(in: 15...25)
+                    )
+                    raindrops.append(drop)
+                }
 
-            // Update positions
-            for i in raindrops.indices {
-                raindrops[i].position.y += raindrops[i].speed
-            }
+                // Update positions
+                for i in raindrops.indices {
+                    raindrops[i].position.y += raindrops[i].speed
+                }
 
-            // Remove off-screen drops
-            raindrops.removeAll { $0.position.y > screenSize.height + 20 }
-        }
+                // Remove off-screen drops
+                raindrops.removeAll { $0.position.y > screenSize.height + 20 }
+            }
+            .store(in: &cancellables)
     }
 
     private func startSnow() {
-        Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true) { _ in
-            if snowflakes.count < 50 {
-                let flake = Snowflake(
-                    position: CGPoint(
-                        x: CGFloat.random(in: 0...screenSize.width),
-                        y: -10
-                    ),
-                    size: CGFloat.random(in: 8...15),
-                    opacity: Double.random(in: 0.4...0.8),
-                    rotation: Double.random(in: 0...360),
-                    speed: CGFloat.random(in: 2...5),
-                    wobble: Double.random(in: -1...1)
-                )
-                snowflakes.append(flake)
-            }
+        Timer.publish(every: 0.02, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                if snowflakes.count < 50 {
+                    let flake = Snowflake(
+                        position: CGPoint(
+                            x: CGFloat.random(in: 0...screenSize.width),
+                            y: -10
+                        ),
+                        size: CGFloat.random(in: 8...15),
+                        opacity: Double.random(in: 0.4...0.8),
+                        rotation: Double.random(in: 0...360),
+                        speed: CGFloat.random(in: 2...5),
+                        wobble: Double.random(in: -1...1)
+                    )
+                    snowflakes.append(flake)
+                }
 
-            // Update positions
-            for i in snowflakes.indices {
-                snowflakes[i].position.y += snowflakes[i].speed
-                snowflakes[i].position.x += snowflakes[i].wobble
-                snowflakes[i].rotation += 2
-            }
+                // Update positions
+                for i in snowflakes.indices {
+                    snowflakes[i].position.y += snowflakes[i].speed
+                    snowflakes[i].position.x += snowflakes[i].wobble
+                    snowflakes[i].rotation += 2
+                }
 
-            // Remove off-screen flakes
-            snowflakes.removeAll { $0.position.y > screenSize.height + 10 }
-        }
+                // Remove off-screen flakes
+                snowflakes.removeAll { $0.position.y > screenSize.height + 10 }
+            }
+            .store(in: &cancellables)
     }
 
     private func startClouds() {
@@ -263,33 +276,39 @@ struct WeatherSystemView: View {
             clouds.append(cloud)
         }
 
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            for i in clouds.indices {
-                clouds[i].position.x += clouds[i].speed
-            }
-
-            // Wrap around
-            for i in clouds.indices {
-                if clouds[i].position.x > screenSize.width + 150 {
-                    clouds[i].position.x = -150
+        Timer.publish(every: 0.1, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                for i in clouds.indices {
+                    clouds[i].position.x += clouds[i].speed
                 }
-            }
-        }
-    }
 
-    private func startLightning() {
-        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
-            if Double.random(in: 0...1) < 0.3 {
-                withAnimation(.easeOut(duration: 0.1)) {
-                    lightningOpacity = 0.8
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        lightningOpacity = 0
+                // Wrap around
+                for i in clouds.indices {
+                    if clouds[i].position.x > screenSize.width + 150 {
+                        clouds[i].position.x = -150
                     }
                 }
             }
-        }
+            .store(in: &cancellables)
+    }
+
+    private func startLightning() {
+        Timer.publish(every: 3.0, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                if Double.random(in: 0...1) < 0.3 {
+                    withAnimation(.easeOut(duration: 0.1)) {
+                        lightningOpacity = 0.8
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            lightningOpacity = 0
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
