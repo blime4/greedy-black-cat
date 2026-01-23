@@ -1707,18 +1707,21 @@ class GameViewModel: ObservableObject {
         cameraZoom = 1.25
 
         // Spawn victory particles
-        for _ in 0..<30 {
-            let angle = Double.random(in: 0...(2 * .pi))
-            let speed = Double.random(in: 2.0...5.0)
-            let particle = Particle(
-                position: CGPoint(x: CGFloat(boss.position.x), y: CGFloat(boss.position.y)),
-                velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
-                color: boss.type.color,
-                size: CGFloat.random(in: 0.15...0.4),
-                life: 0,
-                maxLife: Double.random(in: 0.8...1.5)
-            )
-            particles.append(particle)
+        // Only spawn if boss position is within bounds
+        if boss.position.isInBounds(width: gridWidth, height: gridHeight) {
+            for _ in 0..<30 {
+                let angle = Double.random(in: 0...(2 * .pi))
+                let speed = Double.random(in: 2.0...5.0)
+                let particle = Particle(
+                    position: CGPoint(x: CGFloat(boss.position.x), y: CGFloat(boss.position.y)),
+                    velocity: CGVector(dx: cos(angle) * speed, dy: sin(angle) * speed),
+                    color: boss.type.color,
+                    size: CGFloat.random(in: 0.15...0.4),
+                    life: 0,
+                    maxLife: Double.random(in: 0.8...1.5)
+                )
+                particles.append(particle)
+            }
         }
 
         // Score bonus
