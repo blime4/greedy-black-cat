@@ -37,9 +37,13 @@ struct WeatherSystemView: View {
             initializeWeather()
         }
         .onDisappear {
+            // Properly cancel all timer subscriptions
+            cancellables.forEach { $0.cancel() }
             cancellables.removeAll()
         }
         .onChange(of: weatherType) { _, newType in
+            // Cancel existing timers before switching weather type
+            cancellables.forEach { $0.cancel() }
             cancellables.removeAll()
             updateWeather(for: newType)
         }
