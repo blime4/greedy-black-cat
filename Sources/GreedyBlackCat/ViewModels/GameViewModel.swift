@@ -1573,6 +1573,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func performBossAttack(boss: Boss) {
+        // Validate boss position is within bounds
+        guard boss.position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Determine attack direction (towards cat)
         let dx = cat.head.x - boss.position.x
         let dy = cat.head.y - boss.position.y
