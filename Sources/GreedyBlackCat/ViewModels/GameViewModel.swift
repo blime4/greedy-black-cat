@@ -1020,8 +1020,10 @@ class GameViewModel: ObservableObject {
 
     private func increaseSpeed() {
         let newSpeed = currentSpeed * 0.98
-        if newSpeed >= 0.05 {
-            currentSpeed = newSpeed
+        // Enforce absolute minimum speed cap to prevent unplayably fast game
+        let minSpeed = 0.03
+        if newSpeed >= minSpeed {
+            currentSpeed = max(minSpeed, newSpeed)
             startGameLoop() // Restart with new speed
         }
     }
