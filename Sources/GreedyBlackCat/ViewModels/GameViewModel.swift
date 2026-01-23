@@ -204,7 +204,8 @@ class GameViewModel: ObservableObject {
             Task { @MainActor in
                 guard let self = self else { return }
                 if self.timeRemaining > 0 {
-                    self.timeRemaining -= Self.timeUpdateInterval
+                    // Prevent negative time values by capping at 0
+                    self.timeRemaining = max(0, self.timeRemaining - Self.timeUpdateInterval)
 
                     // Check for urgency state (less than threshold seconds)
                     let wasRunningOut = self.isTimeRunningOut
