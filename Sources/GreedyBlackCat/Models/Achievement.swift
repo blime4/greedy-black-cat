@@ -105,7 +105,7 @@ struct GameStats: Codable {
         totalPowerUpsCollected += powerUpsCollected
         totalDashesUsed += dashesUsed
         maxCombo = max(maxCombo, comboCount)
-        maxLength = max(maxCombo, length)
+        maxLength = max(maxLength, length)
 
         // Update high score for mode
         let modeKey = "GreedyBlackCatHighScore_\(gameMode.rawValue)"
