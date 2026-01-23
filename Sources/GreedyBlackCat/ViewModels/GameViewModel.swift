@@ -812,7 +812,8 @@ class GameViewModel: ObservableObject {
 
         // Spawn rainbow particles for streak
         let streakColors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple]
-        for _ in 0..<18 {
+        let particleCount = min(18, max(0, 100 - particles.count))
+        for _ in 0..<particleCount {
             let angle = Double.random(in: 0...(2 * .pi))
             let speed = Double.random(in: 1.5...3.0)
             let particle = Particle(
