@@ -110,7 +110,7 @@ class GameViewModel: ObservableObject {
         let theHighScore = Self.loadHighScore(for: gameMode)
         let gridW = theSettings.gridWidth
         let gridH = theSettings.gridHeight
-        let theFood = Self.generateFood(for: theCat, gridWidth: gridW, gridHeight: gridH)
+        let theFood = generateFood(for: theCat, gridWidth: gridW, gridHeight: gridH)
 
         // Now assign to all properties
         self.settings = theSettings
@@ -210,7 +210,7 @@ class GameViewModel: ObservableObject {
         bossAttacks.removeAll()
         defeatedBossTypes.removeAll()
 
-        food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
+        food = generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
 
         // Check if grid is completely filled (win condition)
         if food?.position.x == -1 {
@@ -637,7 +637,7 @@ class GameViewModel: ObservableObject {
         }
 
         // Generate new food
-        food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
+        food = generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
 
         // Check if grid is completely filled (win condition)
         if food?.position.x == -1 {
@@ -1139,13 +1139,15 @@ class GameViewModel: ObservableObject {
     }
 
     // MARK: - Food Generation
-    private static func generateFood(for cat: Cat, gridWidth: Int, gridHeight: Int) -> Food {
+    private func generateFood(for cat: Cat, gridWidth: Int, gridHeight: Int) -> Food {
         var validPositions: [Position] = []
 
         for x in 0..<gridWidth {
             for y in 0..<gridHeight {
                 let pos = Position(x: x, y: y)
-                if !cat.body.contains(pos) {
+                if !cat.body.contains(pos) &&
+                   !obstacles.contains(where: { $0.position == pos }) &&
+                   !powerUps.contains(where: { $0.position == pos }) {
                     validPositions.append(pos)
                 }
             }
