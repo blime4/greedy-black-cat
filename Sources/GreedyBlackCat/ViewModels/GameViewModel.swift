@@ -399,6 +399,9 @@ class GameViewModel: ObservableObject {
             screenFlashIntensity = max(0, screenFlashIntensity - 0.1)
         }
 
+        // Clean up expired boss attacks
+        bossAttacks.removeAll { $0.isExpired }
+
         // Hide achievement popup after delay
         if showingAchievement {
             let task = Task { @MainActor in
