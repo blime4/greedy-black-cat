@@ -1277,10 +1277,13 @@ class GameViewModel: ObservableObject {
         let activeTypes = activePowerUps.map { $0.type }
         let totalCount = activeTypes.count + 1 // Include the new one
 
-        // Check for specific combinations
+        // Check for specific combinations (newPowerUp is being added to activeTypes)
+        var allTypes = activeTypes
+        allTypes.append(newPowerUp)
+
         if totalCount >= 2 {
-            // Speed + Invincibility = "Unstoppable"
-            if activeTypes.contains(.speedBoost) && activeTypes.contains(.invincibility) && newPowerUp == .doublePoints {
+            // Speed + Invincibility + Double Points = "Unstoppable"
+            if allTypes.contains(.speedBoost) && allTypes.contains(.invincibility) && allTypes.contains(.doublePoints) {
                 showPowerUpComboNotification(
                     name: "UNSTOPPABLE!",
                     description: "Speed + Invincibility + Double Points!",
@@ -1288,8 +1291,8 @@ class GameViewModel: ObservableObject {
                     color: .purple
                 )
             }
-            // Double Points + Speed = "Greedy Cat"
-            else if activeTypes.contains(.doublePoints) && activeTypes.contains(.speedBoost) && newPowerUp == .doublePoints {
+            // Double Points + Speed = "Greedy Cat" (Triple Points)
+            else if allTypes.contains(.doublePoints) && allTypes.contains(.speedBoost) {
                 showPowerUpComboNotification(
                     name: "GREEDY CAT!",
                     description: "Triple Points Active!",
@@ -1298,7 +1301,7 @@ class GameViewModel: ObservableObject {
                 )
             }
             // Invincibility + Slow Motion = "Time Lord"
-            else if activeTypes.contains(.invincibility) && activeTypes.contains(.slowMotion) && newPowerUp == .invincibility {
+            else if allTypes.contains(.invincibility) && allTypes.contains(.slowMotion) {
                 showPowerUpComboNotification(
                     name: "TIME LORD!",
                     description: "Invincible + Slow Motion!",
