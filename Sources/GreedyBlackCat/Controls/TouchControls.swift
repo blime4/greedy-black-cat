@@ -60,10 +60,13 @@ struct TouchControls: ViewModifier {
                         }
 
                         // Reset with delay for smooth transition
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                            isDragging = false
-                            swipeDirection = nil
-                            dragOffset = .zero
+                        Task {
+                            try? await Task.sleep(nanoseconds: 150_000_000)
+                            await MainActor.run {
+                                isDragging = false
+                                swipeDirection = nil
+                                dragOffset = .zero
+                            }
                         }
                     }
             )
