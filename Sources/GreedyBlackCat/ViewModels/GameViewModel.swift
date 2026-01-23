@@ -693,7 +693,10 @@ class GameViewModel: ObservableObject {
     }
 
     private func spawnParticles(at position: Position, color: Color, count: Int) {
-        for _ in 0..<count {
+        // Safety limit to prevent unbounded particle growth
+        let spawnCount = min(count, max(0, 100 - particles.count))
+
+        for _ in 0..<spawnCount {
             let angle = Double.random(in: 0...(2 * .pi))
             let speed = Double.random(in: 0.5...2.0)
             let particle = Particle(
