@@ -177,6 +177,20 @@ class GameViewModel: ObservableObject {
         trailSystem.clear()
         trailPoints = []
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
+
+        // Check if grid is completely filled (win condition)
+        if food?.position.x == -1 {
+            victory()
+        }
+    }
+
+    private func victory() {
+        stopGameLoop()
+        stopTimeTimer()
+        gameState = .gameOver
+        showVictoryCelebration = true
+        achievementUnlocked = "🎉 GRID COMPLETE! 🎉"
+        showingAchievement = true
     }
 
     private func startTimeTimer() {
@@ -504,6 +518,12 @@ class GameViewModel: ObservableObject {
 
         // Generate new food
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
+
+        // Check if grid is completely filled (win condition)
+        if food?.position.x == -1 {
+            victory()
+            return
+        }
 
         // Chance to spawn power-up (only in modes that allow it)
         if gameMode.hasPowerUps && Double.random(in: 0...1) < 0.15 {
@@ -983,9 +1003,10 @@ class GameViewModel: ObservableObject {
             }
         }
 
+        // If grid is completely filled, the cat has won - return a position
+        // that will trigger game over on next move
         guard let randomPosition = validPositions.randomElement() else {
-            // Fallback if no valid positions (shouldn't happen)
-            return Food(position: Position(x: 0, y: 0))
+            return Food(position: Position(x: -1, y: -1))
         }
 
         return Food(position: randomPosition)
