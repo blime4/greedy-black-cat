@@ -847,22 +847,26 @@ class GameViewModel: ObservableObject {
         let types: [ObstacleType] = [.rock, .spike, .ice]
         guard let type = types.randomElement() else { return }
 
-        var validPositions: [Position] = []
-        for x in 0..<gridWidth {
-            for y in 0..<gridHeight {
-                let pos = Position(x: x, y: y)
-                let centerSafeZone = abs(x - gridWidth / 2) < 3 && abs(y - gridHeight / 2) < 3
-                if !cat.body.contains(pos) &&
-                   pos != food?.position &&
-                   !obstacles.contains(where: { $0.position == pos }) &&
-                   !centerSafeZone {
-                    validPositions.append(pos)
-                }
-            }
-        }
+        // More efficient: try random positions with retry limit instead of scanning entire grid
+        var attempts = 0
+        let maxAttempts = 50
 
-        if let position = validPositions.randomElement() {
-            obstacles.append(Obstacle(type: type, position: position))
+        while attempts < maxAttempts {
+            let x = Int.random(in: 0..<gridWidth)
+            let y = Int.random(in: 0..<gridHeight)
+            let pos = Position(x: x, y: y)
+
+            // Check center safe zone
+            let centerSafeZone = abs(x - gridWidth / 2) < 3 && abs(y - gridHeight / 2) < 3
+
+            if !cat.body.contains(pos) &&
+               pos != food?.position &&
+               !obstacles.contains(where: { $0.position == pos }) &&
+               !centerSafeZone {
+                obstacles.append(Obstacle(type: type, position: pos))
+                return
+            }
+            attempts += 1
         }
     }
 
