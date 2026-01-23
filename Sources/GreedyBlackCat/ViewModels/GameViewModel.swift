@@ -1207,6 +1207,11 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Food Generation
     private func generateFood(for cat: Cat, gridWidth: Int, gridHeight: Int) -> Food {
+        // Early return for invalid grid dimensions
+        guard gridWidth > 0 && gridHeight > 0 else {
+            return Food(position: Position(x: -1, y: -1))
+        }
+
         var validPositions: [Position] = []
 
         for x in 0..<gridWidth {
