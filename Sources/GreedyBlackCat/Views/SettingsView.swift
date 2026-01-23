@@ -140,7 +140,11 @@ struct SettingsView: View {
     }
 
     private func resetHighScore() {
-        UserDefaults.standard.set(0, forKey: "GreedyBlackCatHighScore")
+        // Clear high scores for all game modes
+        for mode in GameMode.allCases {
+            let key = "GreedyBlackCatHighScore_\(mode.rawValue)"
+            UserDefaults.standard.set(0, forKey: key)
+        }
     }
 }
 
