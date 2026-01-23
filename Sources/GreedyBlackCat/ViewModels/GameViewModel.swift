@@ -541,6 +541,9 @@ class GameViewModel: ObservableObject {
     private func handleFoodEaten(at position: Position) {
         guard let currentFood = food else { return }
 
+        // Validate position is within bounds
+        guard position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Trigger eating animation
         isEating = true
         let task = Task { @MainActor in
