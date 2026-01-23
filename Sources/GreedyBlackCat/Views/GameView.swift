@@ -491,9 +491,9 @@ struct GameView: View {
                 }
 
                 // Cat body
-                ForEach(Array(viewModel.cat.body.enumerated()), id: \.offset) { index, position in
+                ForEach(viewModel.cat.body, id: \.self) { position in
                     CatSegmentView(
-                        isHead: index == 0,
+                        isHead: position == viewModel.cat.head,
                         direction: viewModel.cat.direction,
                         cellSize: cellSize,
                         comboCount: viewModel.comboCount,
