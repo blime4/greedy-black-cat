@@ -1342,7 +1342,8 @@ class GameViewModel: ObservableObject {
     private func scheduleBossAttack(interval: TimeInterval) {
         let task = Task { @MainActor in
             while !Task.isCancelled && bossBattleActive && currentBoss != nil {
-                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+                let nanoseconds = UInt64(interval) * 1_000_000_000
+                try? await Task.sleep(nanoseconds: nanoseconds)
                 if !Task.isCancelled && bossBattleActive, let boss = currentBoss {
                     performBossAttack(boss: boss)
                 }
