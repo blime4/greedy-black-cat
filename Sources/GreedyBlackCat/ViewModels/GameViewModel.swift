@@ -906,12 +906,16 @@ class GameViewModel: ObservableObject {
         dashCooldown = dashCooldownTime
         dashesUsed += 1
 
-        // Move 3 spaces instantly in current direction
+        // Move 3 spaces instantly in current direction, checking for collisions
         for _ in 0..<3 {
             let newPosition = cat.head.applying(cat.direction.offset)
             if newPosition.isInBounds(width: gridWidth, height: gridHeight) &&
-               !obstacles.contains(where: { $0.position == newPosition }) {
+               !obstacles.contains(where: { $0.position == newPosition }) &&
+               !cat.body.contains(newPosition) {
                 cat.move(to: newPosition, grow: false)
+            } else {
+                // Stop dashing if path is blocked
+                break
             }
         }
 
