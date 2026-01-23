@@ -822,6 +822,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func spawnParticles(at position: Position, color: Color, count: Int) {
+        // Validate position is within bounds
+        guard position.isInBounds(width: gridWidth, height: gridHeight) else { return }
+
         // Safety limit to prevent unbounded particle growth and negative counts
         let maxAllowed = max(0, 100 - particles.count)
         let spawnCount = min(max(count, 0), maxAllowed)
