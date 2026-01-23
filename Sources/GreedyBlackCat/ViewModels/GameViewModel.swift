@@ -993,6 +993,9 @@ class GameViewModel: ObservableObject {
     }
 
     private func spawnPowerUp() {
+        // Safety limit to prevent too many power-ups on field
+        guard powerUps.count < 5 else { return }
+
         let availableTypes = PowerUpType.allCases
         guard let type = availableTypes.randomElement() else { return }
 
@@ -1011,10 +1014,7 @@ class GameViewModel: ObservableObject {
         }
 
         if let position = validPositions.randomElement() {
-            // Safety limit to prevent too many power-ups on field
-            if powerUps.count < 5 {
-                powerUps.append(PowerUp(type: type, position: position))
-            }
+            powerUps.append(PowerUp(type: type, position: position))
         }
     }
 
