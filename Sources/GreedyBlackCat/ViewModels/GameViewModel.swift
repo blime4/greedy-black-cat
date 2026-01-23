@@ -915,6 +915,7 @@ class GameViewModel: ObservableObject {
                pos != food?.position &&
                !obstacles.contains(where: { $0.position == pos }) &&
                !powerUps.contains(where: { $0.position == pos }) &&
+               currentBoss?.position != pos &&
                !centerSafeZone {
                 obstacles.append(Obstacle(type: type, position: pos))
                 return
