@@ -89,10 +89,10 @@ struct GameView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .overlay(
                         // Speed lines during dash
-                        SpeedLinesOverlay(
-                            isActive: viewModel.isDashing,
+                        SpeedLinesView(
+                            isDashing: viewModel.isDashing,
                             direction: viewModel.cat.direction,
-                            intensity: viewModel.comboCount >= 5 ? 1.0 : 0.6
+                            gridSize: cellSize
                         )
                     )
                     .timeWarpEffect(
