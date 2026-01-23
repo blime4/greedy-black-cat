@@ -1079,6 +1079,10 @@ class GameViewModel: ObservableObject {
         // Guard against multiple game over calls in same tick
         guard gameState == .playing else { return }
 
+        // Cancel any pending achievement hide task
+        achievementHideTask?.cancel()
+        achievementHideTask = nil
+
         // Stop boss battle if active
         bossBattleActive = false
         currentBoss = nil
