@@ -608,7 +608,7 @@ class GameViewModel: ObservableObject {
             #endif
 
             // Show combo popup
-            self.comboMultiplier = comboCount
+            self.comboMultiplier = min(comboCount, Self.maxComboMultiplier)
             showComboPopup = true
 
             // Camera zoom effect for combo
