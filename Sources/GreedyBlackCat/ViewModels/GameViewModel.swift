@@ -1674,13 +1674,12 @@ class GameViewModel: ObservableObject {
 
         let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 500_000_000)
-            if !Task.isCancelled {
-                cameraZoom = 1.0
-            }
+            guard !Task.isCancelled else { return }
+            cameraZoom = 1.0
+
             try? await Task.sleep(nanoseconds: 1_500_000_000)
-            if !Task.isCancelled {
-                currentBoss = nil
-            }
+            guard !Task.isCancelled else { return }
+            currentBoss = nil
         }
         addTask(task)
 
