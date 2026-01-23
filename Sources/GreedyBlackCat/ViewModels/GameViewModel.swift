@@ -918,6 +918,11 @@ class GameViewModel: ObservableObject {
         // Guard against multiple game over calls in same tick
         guard gameState == .playing else { return }
 
+        // Stop boss battle if active
+        bossBattleActive = false
+        currentBoss = nil
+        bossAttacks.removeAll()
+
         stopGameLoop()
         stopTimeTimer()
         gameState = .gameOver
