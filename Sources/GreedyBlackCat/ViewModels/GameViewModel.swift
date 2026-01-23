@@ -384,7 +384,12 @@ class GameViewModel: ObservableObject {
         }
 
         // Check food collision (ignore invalid positions)
-        let ateFood = food?.position == newPosition && food?.position.x != -1
+        let ateFood: Bool
+        if let foodPosition = food?.position, foodPosition.x != -1 {
+            ateFood = foodPosition == newPosition
+        } else {
+            ateFood = false
+        }
         cat.move(to: newPosition, grow: ateFood)
 
         if ateFood {
