@@ -834,7 +834,10 @@ class GameViewModel: ObservableObject {
         }
 
         if let position = validPositions.randomElement() {
-            powerUps.append(PowerUp(type: type, position: position))
+            // Safety limit to prevent too many power-ups on field
+            if powerUps.count < 5 {
+                powerUps.append(PowerUp(type: type, position: position))
+            }
         }
     }
 
