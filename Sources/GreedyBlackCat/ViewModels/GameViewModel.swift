@@ -78,6 +78,9 @@ class GameViewModel: ObservableObject {
     private var timeTimer: Timer?
     private var currentSpeed: TimeInterval
 
+    // MARK: - Task Storage
+    nonisolated(unsafe) private var activeTasks: Set<Task<Void, Never>> = []
+
     // MARK: - Input Queue
     private var inputQueue: [Direction] = []
     private let maxInputQueueSize = 2
@@ -203,6 +206,24 @@ class GameViewModel: ObservableObject {
         timeTimer = nil
     }
 
+    // MARK: - Task Management
+    private func addTask(_ task: Task<Void, Never>) {
+        activeTasks.insert(task)
+    }
+
+    private func cancelAllTasks() {
+        activeTasks.forEach { $0.cancel() }
+        activeTasks.removeAll()
+    }
+
+    deinit {
+        cancelAllTasks()
+        gameTimer?.invalidate()
+        gameTimer = nil
+        timeTimer?.invalidate()
+        timeTimer = nil
+    }
+
     private func timeUp() {
         stopTimeTimer()
         stopGameLoop()
@@ -324,10 +345,13 @@ class GameViewModel: ObservableObject {
 
         // Hide achievement popup after delay
         if showingAchievement {
-            Task { @MainActor in
+            let task = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
-                showingAchievement = false
+                if !Task.isCancelled {
+                    showingAchievement = false
+                }
             }
+            addTask(task)
         }
 
         // Spawn obstacles as difficulty increases
@@ -367,10 +391,13 @@ class GameViewModel: ObservableObject {
 
         // Trigger eating animation
         isEating = true
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 200_000_000)
-            isEating = false
+            if !Task.isCancelled {
+                isEating = false
+            }
         }
+        addTask(task)
 
         foodEaten += 1
         consecutiveFoodsWithoutCollision += 1
@@ -392,10 +419,13 @@ class GameViewModel: ObservableObject {
         // Holographic effect for rare food (large fish)
         if currentFood.type == .largeFish {
             holographicEffectActive = true
-            Task { @MainActor in
+            let task = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 800_000_000)
-                holographicEffectActive = false
+                if !Task.isCancelled {
+                    holographicEffectActive = false
+                }
             }
+            addTask(task)
         }
 
         // Screen flash and shake on combo milestones
@@ -411,10 +441,13 @@ class GameViewModel: ObservableObject {
             // Activate screen distortion on heavy impacts
             if comboCount >= 5 || screenShake > 10 {
                 screenDistortionActive = true
-                Task { @MainActor in
+                let task = Task { @MainActor in
                     try? await Task.sleep(nanoseconds: 500_000_000)
-                    screenDistortionActive = false
+                    if !Task.isCancelled {
+                        screenDistortionActive = false
+                    }
                 }
+                addTask(task)
             }
 
             #if os(iOS)
@@ -427,17 +460,23 @@ class GameViewModel: ObservableObject {
 
             // Camera zoom effect for combo
             cameraZoom = comboCount == 5 ? 1.15 : 1.08
-            Task { @MainActor in
+            let zoomTask = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 200_000_000)
-                cameraZoom = 1.0
-                neonGlowActive = false
+                if !Task.isCancelled {
+                    cameraZoom = 1.0
+                    neonGlowActive = false
+                }
             }
+            addTask(zoomTask)
 
             // Hide popup after animation
-            Task { @MainActor in
+            let popupTask = Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 800_000_000)
-                showComboPopup = false
+                if !Task.isCancelled {
+                    showComboPopup = false
+                }
             }
+            addTask(popupTask)
         }
 
         // Spawn particles
@@ -607,11 +646,14 @@ class GameViewModel: ObservableObject {
 
         // Camera zoom for emphasis
         cameraZoom = 1.12
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 300_000_000)
-            cameraZoom = 1.0
-            milestoneCelebration = false
+            if !Task.isCancelled {
+                cameraZoom = 1.0
+                milestoneCelebration = false
+            }
         }
+        addTask(task)
     }
 
     private func spawnParticles(at position: Position, color: Color, count: Int) {
@@ -724,10 +766,13 @@ class GameViewModel: ObservableObject {
         #endif
 
         // End dash after brief moment
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
-            isDashing = false
+            if !Task.isCancelled {
+                isDashing = false
+            }
         }
+        addTask(task)
     }
 
     private func spawnPowerUp() {
@@ -796,10 +841,13 @@ class GameViewModel: ObservableObject {
 
         // Camera zoom for power-up
         cameraZoom = 1.1
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 200_000_000)
-            cameraZoom = 1.0
+            if !Task.isCancelled {
+                cameraZoom = 1.0
+            }
         }
+        addTask(task)
     }
 
     private func updatePowerUps() {
@@ -858,11 +906,14 @@ class GameViewModel: ObservableObject {
         // Trigger damage flash
         triggerFlash(type: .damage, intensity: 0.6)
 
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 300_000_000)
-            gameOverImpact = false
-            cameraZoom = 1.0
+            if !Task.isCancelled {
+                gameOverImpact = false
+                cameraZoom = 1.0
+            }
         }
+        addTask(task)
 
         if score > highScore {
             highScore = score
@@ -983,10 +1034,13 @@ class GameViewModel: ObservableObject {
                     #endif
 
                     // Clear notification after delay
-                    Task { @MainActor in
+                    let task = Task { @MainActor in
                         try? await Task.sleep(nanoseconds: 2_000_000_000)
-                        difficultyNotification = ""
+                        if !Task.isCancelled {
+                            difficultyNotification = ""
+                        }
                     }
+                    addTask(task)
                 }
             }
 
@@ -1065,10 +1119,13 @@ class GameViewModel: ObservableObject {
         screenShake = 10
         cameraZoom = 1.15
 
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 300_000_000)
-            cameraZoom = 1.0
+            if !Task.isCancelled {
+                cameraZoom = 1.0
+            }
         }
+        addTask(task)
 
         // Show achievement
         showingAchievement = true
@@ -1183,10 +1240,13 @@ class GameViewModel: ObservableObject {
         screenShake = 12
         cameraZoom = 1.2
 
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 500_000_000)
-            cameraZoom = 1.0
+            if !Task.isCancelled {
+                cameraZoom = 1.0
+            }
         }
+        addTask(task)
 
         #if os(iOS)
         HapticFeedback.notification(.warning)
@@ -1233,14 +1293,15 @@ class GameViewModel: ObservableObject {
     }
 
     private func scheduleBossAttack(interval: TimeInterval) {
-        Task { @MainActor in
-            while bossBattleActive && currentBoss != nil {
+        let task = Task { @MainActor in
+            while !Task.isCancelled && bossBattleActive && currentBoss != nil {
                 try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
-                if bossBattleActive, let boss = currentBoss {
+                if !Task.isCancelled && bossBattleActive, let boss = currentBoss {
                     performBossAttack(boss: boss)
                 }
             }
         }
+        addTask(task)
     }
 
     private func performBossAttack(boss: Boss) {
@@ -1322,12 +1383,17 @@ class GameViewModel: ObservableObject {
         showingAchievement = true
         achievementUnlocked = "🎉 \(boss.type.rawValue) DEFEATED!\n+\(bossBonus) pts"
 
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 500_000_000)
-            cameraZoom = 1.0
+            if !Task.isCancelled {
+                cameraZoom = 1.0
+            }
             try? await Task.sleep(nanoseconds: 1_500_000_000)
-            currentBoss = nil
+            if !Task.isCancelled {
+                currentBoss = nil
+            }
         }
+        addTask(task)
 
         #if os(iOS)
         HapticFeedback.success()
@@ -1341,10 +1407,13 @@ class GameViewModel: ObservableObject {
         toastType = type
         showToast = true
 
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 3_000_000_000)
-            showToast = false
+            if !Task.isCancelled {
+                showToast = false
+            }
         }
+        addTask(task)
     }
 
     // MARK: - Flash Effects
@@ -1352,15 +1421,12 @@ class GameViewModel: ObservableObject {
         activeFlashType = type
         flashIntensity = intensity
 
-        Task { @MainActor in
+        let task = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 600_000_000)
-            activeFlashType = nil
+            if !Task.isCancelled {
+                activeFlashType = nil
+            }
         }
-    }
-
-    // MARK: - Cleanup
-    deinit {
-        gameTimer?.invalidate()
-        gameTimer = nil
+        addTask(task)
     }
 }
