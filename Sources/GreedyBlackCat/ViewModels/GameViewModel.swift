@@ -683,8 +683,8 @@ class GameViewModel: ObservableObject {
             celebrateScoreMilestone(at: position)
         }
 
-        // Check for streak milestones
-        if consecutiveFoodsWithoutCollision >= 10 {
+        // Check for streak milestones (every 10 consecutive foods)
+        if consecutiveFoodsWithoutCollision >= 10 && consecutiveFoodsWithoutCollision % 10 == 0 {
             celebrateStreakMilestone(at: position)
         }
 
