@@ -387,25 +387,84 @@ class GameViewModel: ObservableObject {
 
         // If aligned on one axis, prefer that axis
         if dx == 0 {
+            let candidate = Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+            // Check if magnetized position is valid (not obstacle, in bounds)
+            if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == candidate }) {
+                return candidate
+            }
             return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
         } else if dy == 0 {
+            let candidate = Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+            if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == candidate }) {
+                return candidate
+            }
             return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
         }
 
         // Otherwise use current direction but bias toward food
         switch cat.direction {
         case .up:
-            if dy < 0 && abs(dy) >= abs(dx) { return cat.head.applying(cat.direction.offset) }
-            return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+            if dy < 0 && abs(dy) >= abs(dx) {
+                let candidate = cat.head.applying(cat.direction.offset)
+                if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+                   !obstacles.contains(where: { $0.position == candidate }) {
+                    return candidate
+                }
+                return cat.head.applying(cat.direction.offset)
+            }
+            let candidate = Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+            if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == candidate }) {
+                return candidate
+            }
+            return candidate
         case .down:
-            if dy > 0 && abs(dy) >= abs(dx) { return cat.head.applying(cat.direction.offset) }
-            return Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+            if dy > 0 && abs(dy) >= abs(dx) {
+                let candidate = cat.head.applying(cat.direction.offset)
+                if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+                   !obstacles.contains(where: { $0.position == candidate }) {
+                    return candidate
+                }
+                return cat.head.applying(cat.direction.offset)
+            }
+            let candidate = Position(x: cat.head.x + (dx > 0 ? 1 : -1), y: cat.head.y)
+            if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == candidate }) {
+                return candidate
+            }
+            return candidate
         case .left:
-            if dx < 0 && abs(dx) >= abs(dy) { return cat.head.applying(cat.direction.offset) }
-            return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+            if dx < 0 && abs(dx) >= abs(dy) {
+                let candidate = cat.head.applying(cat.direction.offset)
+                if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+                   !obstacles.contains(where: { $0.position == candidate }) {
+                    return candidate
+                }
+                return cat.head.applying(cat.direction.offset)
+            }
+            let candidate = Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+            if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == candidate }) {
+                return candidate
+            }
+            return candidate
         case .right:
-            if dx > 0 && abs(dx) >= abs(dy) { return cat.head.applying(cat.direction.offset) }
-            return Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+            if dx > 0 && abs(dx) >= abs(dy) {
+                let candidate = cat.head.applying(cat.direction.offset)
+                if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+                   !obstacles.contains(where: { $0.position == candidate }) {
+                    return candidate
+                }
+                return cat.head.applying(cat.direction.offset)
+            }
+            let candidate = Position(x: cat.head.x, y: cat.head.y + (dy > 0 ? 1 : -1))
+            if candidate.isInBounds(width: gridWidth, height: gridHeight) &&
+               !obstacles.contains(where: { $0.position == candidate }) {
+                return candidate
+            }
+            return candidate
         }
     }
 
