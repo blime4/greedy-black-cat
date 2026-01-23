@@ -1309,7 +1309,8 @@ class GameViewModel: ObservableObject {
         let hasSpeedModifier = activePowerUps.contains { $0.type == .speedBoost || $0.type == .slowMotion }
 
         if !hasSpeedModifier {
-            currentSpeed = baseSpeed * max(0.5, speedMultiplier)
+            let minSpeed = 0.03
+            currentSpeed = max(minSpeed, baseSpeed * max(0.5, speedMultiplier))
             startGameLoop()
         }
 
