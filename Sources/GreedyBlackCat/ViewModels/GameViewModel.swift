@@ -516,9 +516,15 @@ class GameViewModel: ObservableObject {
         let popup = ScorePopup(points: points, position: currentFood.position)
         scorePopups.append(popup)
 
-        // Clean up old popups and hit effects
+        // Clean up old popups and hit effects (with safety limit)
         scorePopups.removeAll { $0.isExpired }
+        if scorePopups.count > 20 {
+            scorePopups = Array(scorePopups.suffix(20))
+        }
         hitEffects.removeAll { $0.isExpired }
+        if hitEffects.count > 30 {
+            hitEffects = Array(hitEffects.suffix(30))
+        }
 
         // Generate new food
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
