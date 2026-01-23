@@ -231,6 +231,12 @@ class GameViewModel: ObservableObject {
         showVictoryCelebration = true
         achievementUnlocked = "🎉 GRID COMPLETE! 🎉"
         showingAchievement = true
+
+        // Save high score on victory
+        if score > highScore {
+            highScore = score
+            Self.saveHighScore(highScore, for: gameMode)
+        }
     }
 
     private func startTimeTimer() {
