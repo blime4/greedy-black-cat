@@ -88,6 +88,9 @@ class GameViewModel: ObservableObject {
     nonisolated(unsafe) private var activeTasks: Set<Task<Void, Never>> = []
     private var bossAttackTask: Task<Void, Never>?
 
+    // Track which bosses have been defeated to prevent re-triggering
+    private var defeatedBossTypes: Set<BossType> = []
+
     // MARK: - Input Queue
     private var inputQueue: [Direction] = []
     private let maxInputQueueSize = 2
@@ -205,6 +208,7 @@ class GameViewModel: ObservableObject {
         bossBattleActive = false
         currentBoss = nil
         bossAttacks.removeAll()
+        defeatedBossTypes.removeAll()
 
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
 
@@ -1387,7 +1391,8 @@ class GameViewModel: ObservableObject {
             bossType = nil
         }
 
-        if let type = bossType {
+        // Only spawn boss if it hasn't been defeated yet
+        if let type = bossType, !defeatedBossTypes.contains(type) {
             spawnBoss(type: type)
         }
     }
@@ -1597,6 +1602,9 @@ class GameViewModel: ObservableObject {
 
     private func defeatBoss(boss: Boss) {
         bossBattleActive = false
+
+        // Mark this boss type as defeated to prevent re-triggering
+        defeatedBossTypes.insert(boss.type)
 
         // Clear all boss attacks
         bossAttacks.removeAll()
