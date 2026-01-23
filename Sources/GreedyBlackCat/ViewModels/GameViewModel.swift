@@ -69,6 +69,12 @@ class GameViewModel: ObservableObject {
     private var maxComboStreak: Int = 0
     private var consecutiveFoodsWithoutCollision: Int = 0
 
+    // MARK: - Game Constants
+    private static let timeUpdateInterval: TimeInterval = 0.1
+    private static let urgencyTimeThreshold: TimeInterval = 10.0
+    private static let urgencyFlashIntensity: Double = 0.2
+    private static let maxComboMultiplier: Int = 5
+
     // MARK: - Dash System
     private var dashCooldown: TimeInterval = 0
     private let dashCooldownTime: TimeInterval = 3.0
@@ -177,19 +183,19 @@ class GameViewModel: ObservableObject {
         stopTimeTimer()
         guard gameMode.hasTimeLimit else { return }
 
-        timeTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+        timeTimer = Timer.scheduledTimer(withTimeInterval: Self.timeUpdateInterval, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 guard let self = self else { return }
                 if self.timeRemaining > 0 {
-                    self.timeRemaining -= 0.1
+                    self.timeRemaining -= Self.timeUpdateInterval
 
-                    // Check for urgency state (less than 10 seconds)
+                    // Check for urgency state (less than threshold seconds)
                     let wasRunningOut = self.isTimeRunningOut
-                    self.isTimeRunningOut = self.timeRemaining <= 10
+                    self.isTimeRunningOut = self.timeRemaining <= Self.urgencyTimeThreshold
 
                     // Trigger effects when entering urgency state
                     if !wasRunningOut && self.isTimeRunningOut {
-                        self.screenFlashIntensity = 0.2
+                        self.screenFlashIntensity = Self.urgencyFlashIntensity
                         #if os(iOS)
                         HapticFeedback.warning()
                         #endif
@@ -311,7 +317,7 @@ class GameViewModel: ObservableObject {
 
         // Add speed particles during high combos
         if comboCount >= 3 {
-            spawnSpeedParticle(at: cat.head, color: comboCount >= 5 ? .yellow : .orange)
+            spawnSpeedParticle(at: cat.head, color: comboCount >= Self.maxComboMultiplier ? .yellow : .orange)
         }
 
         // Check food collision
@@ -412,7 +418,7 @@ class GameViewModel: ObservableObject {
         lastEatTime = now
 
         // Calculate score with combo multiplier
-        let comboMultiplier = min(comboCount, 5) // Max 5x multiplier
+        let comboMultiplier = min(comboCount, Self.maxComboMultiplier)
         let points = currentFood.points * comboMultiplier
         score += points
 
@@ -434,7 +440,7 @@ class GameViewModel: ObservableObject {
             screenFlashIntensity = comboCount == 5 ? 0.5 : 0.3
 
             // Activate neon glow for mega combos
-            if comboCount >= 5 {
+            if comboCount >= Self.maxComboMultiplier {
                 neonGlowActive = true
             }
 
