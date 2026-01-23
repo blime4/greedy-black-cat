@@ -177,6 +177,35 @@ class GameViewModel: ObservableObject {
         timeRemaining = gameMode.timeLimit ?? 0
         trailSystem.clear()
         trailPoints = []
+
+        // Reset visual effects state
+        showToast = false
+        toastMessage = ""
+        toastIcon = ""
+        toastType = .milestone
+        activeFlashType = nil
+        flashIntensity = 0
+        screenFlashIntensity = 0
+        cameraZoom = 1.0
+        showingAchievement = false
+        achievementUnlocked = ""
+        showComboPopup = false
+        isEating = false
+        gameOverImpact = false
+        showVictoryCelebration = false
+        achievementCelebration = false
+        currentAchievement = .highScore
+        sceneTransitionActive = false
+        milestoneCelebration = false
+        holographicEffectActive = false
+        neonGlowActive = false
+        screenDistortionActive = false
+
+        // Reset boss battle state
+        bossBattleActive = false
+        currentBoss = nil
+        bossAttacks.removeAll()
+
         food = Self.generateFood(for: cat, gridWidth: gridWidth, gridHeight: gridHeight)
 
         // Check if grid is completely filled (win condition)
