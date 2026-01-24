@@ -409,8 +409,16 @@ struct GameView: View {
     // MARK: - Game Grid
     private var gameGridView: some View {
         GeometryReader { geometry in
-            let gridSize = min(geometry.size.width, geometry.size.height)
-            let cellSize = gridSize / CGFloat(max(viewModel.gridWidth, viewModel.gridHeight))
+            // Calculate cell size to fill the entire space
+            // Use the dimension that maintains grid aspect ratio while filling available space
+            let gridAspectRatio = CGFloat(viewModel.gridWidth) / CGFloat(viewModel.gridHeight)
+            let availableAspectRatio = geometry.size.width / geometry.size.height
+
+            // Choose the limiting dimension based on aspect ratios
+            let limitingDimension = availableAspectRatio > gridAspectRatio
+                ? geometry.size.height
+                : geometry.size.width
+            let cellSize = limitingDimension / CGFloat(max(viewModel.gridWidth, viewModel.gridHeight))
 
             ZStack {
                 // Grid background with gradient and rhythmic pulse
@@ -570,7 +578,7 @@ struct GameView: View {
                 SpeedLinesView(
                     isDashing: viewModel.isDashing,
                     direction: viewModel.cat.direction,
-                    gridSize: gridSize
+                    gridSize: cellSize
                 )
 
                 // Hit effects (ripple/shockwave)
@@ -608,7 +616,8 @@ struct GameView: View {
                     }
                 }
             }
-            .frame(width: gridSize, height: gridSize)
+            .frame(width: cellSize * CGFloat(viewModel.gridWidth),
+                   height: cellSize * CGFloat(viewModel.gridHeight))
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
     }

@@ -11,7 +11,8 @@
       "Bash(xcode-select:*)",
       "Bash(mdfind:*)",
       "Bash(swiftc:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Skill(build-macos-apps)"
     ]
   }
 }

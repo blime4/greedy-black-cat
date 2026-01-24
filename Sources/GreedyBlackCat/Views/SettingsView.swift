@@ -99,6 +99,7 @@ struct SettingsView: View {
                 }
             }
             #else
+            .navigationTitle("Settings")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
@@ -108,6 +109,7 @@ struct SettingsView: View {
             }
             #endif
         }
+        .frame(minWidth: 500, minHeight: 400)
     }
 
     private func settingRow<Content: View>(

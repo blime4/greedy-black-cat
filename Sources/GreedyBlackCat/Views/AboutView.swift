@@ -143,6 +143,7 @@ struct AboutView: View {
                 }
             }
             #else
+            .navigationTitle("About")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
@@ -152,6 +153,7 @@ struct AboutView: View {
             }
             #endif
         }
+        .frame(minWidth: 500, minHeight: 400)
     }
 
     private func instructionRow(icon: String, text: String) -> some View {

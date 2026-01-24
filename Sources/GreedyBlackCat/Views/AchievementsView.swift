@@ -68,6 +68,7 @@ struct AchievementsView: View {
                 }
             }
             #else
+            .navigationTitle("Achievements")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
@@ -77,6 +78,7 @@ struct AchievementsView: View {
             }
             #endif
         }
+        .frame(minWidth: 600, minHeight: 500)
         .onAppear {
             stats = GameStats.load()
         }

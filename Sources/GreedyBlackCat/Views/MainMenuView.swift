@@ -153,20 +153,24 @@ struct MainMenuView: View {
                 GameContainerView(viewModel: viewModel)
             }
         }
-        #else
-        .sheet(isPresented: $showingGame) {
-            if let viewModel = gameViewModel {
-                GameContainerView(viewModel: viewModel)
-            }
-        }
-        #endif
         .sheet(isPresented: $showingAbout) {
             AboutView()
         }
         .sheet(isPresented: $showingAchievements) {
             AchievementsView()
         }
-        #if os(macOS)
+        #else
+        .sheet(isPresented: $showingGame) {
+            if let viewModel = gameViewModel {
+                GameContainerView(viewModel: viewModel)
+            }
+        }
+        .sheet(isPresented: $showingAbout) {
+            AboutView()
+        }
+        .sheet(isPresented: $showingAchievements) {
+            AchievementsView()
+        }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
