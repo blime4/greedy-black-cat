@@ -409,17 +409,21 @@ struct GameView: View {
     // MARK: - Game Grid
     private var gameGridView: some View {
         GeometryReader { geometry in
-            // Calculate cell size to fill entire screen
+            // Calculate cell size to fit within available space
             let cellSizeFromWidth = geometry.size.width / CGFloat(viewModel.gridWidth)
             let cellSizeFromHeight = geometry.size.height / CGFloat(viewModel.gridHeight)
-            let cellSize = max(cellSizeFromWidth, cellSizeFromHeight)
+            let cellSize = min(cellSizeFromWidth, cellSizeFromHeight)
 
-            // Grid dimensions
-            let gridWidth = cellSize * CGFloat(viewModel.gridWidth)
-            let gridHeight = cellSize * CGFloat(viewModel.gridHeight)
+            // Calculate grid dimensions
+            let gridContentWidth = cellSize * CGFloat(viewModel.gridWidth)
+            let gridContentHeight = cellSize * CGFloat(viewModel.gridHeight)
+
+            // Center offset
+            let offsetX = (geometry.size.width - gridContentWidth) / 2
+            let offsetY = (geometry.size.height - gridContentHeight) / 2
 
             ZStack {
-                // Grid background with gradient - positioned to fill entire space
+                // Grid background with gradient - fills entire available space
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
@@ -432,7 +436,6 @@ struct GameView: View {
                         )
                     )
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .scaleEffect(1.0 + (viewModel.gamePulse * 0.003))
                     .animation(.easeInOut(duration: 0.1), value: viewModel.gamePulse)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -614,8 +617,7 @@ struct GameView: View {
                     }
                 }
             }
-            .frame(width: gridWidth, height: gridHeight)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .offset(x: offsetX, y: offsetY)
         }
     }
 

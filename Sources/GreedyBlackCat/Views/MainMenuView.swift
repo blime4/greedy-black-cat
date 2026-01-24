@@ -78,12 +78,17 @@ struct MainMenuView: View {
 
                     // Start Button
                     Button(action: {
-                        // Create view model with game already started
-                        let vm = GameViewModel(gameMode: selectedMode, startImmediately: true)
+                        // Create view model
+                        let vm = GameViewModel(gameMode: selectedMode, startImmediately: false)
                         gameViewModel = vm
 
-                        // Show the game
-                        showingGame = true
+                        // Start game and show sheet after state updates
+                        Task { @MainActor in
+                            vm.startGame()
+                            // Small delay to ensure @Published updates propagate
+                            try? await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds
+                            showingGame = true
+                        }
                     }) {
                         HStack {
                             Image(systemName: "play.circle.fill")
@@ -162,9 +167,7 @@ struct MainMenuView: View {
         .sheet(isPresented: $showingGame) {
             if let viewModel = gameViewModel {
                 GameContainerView(viewModel: viewModel)
-                    .frame(minWidth: 1920, minHeight: 1080)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.clear)
+                    .frame(width: 900, height: 700)
             }
         }
         .sheet(isPresented: $showingAbout) {
@@ -231,7 +234,6 @@ struct GameModeCard: View {
 struct GameContainerView: View {
     @ObservedObject var viewModel: GameViewModel
     @Environment(\.dismiss) private var dismiss
-    @State private var hasAppeared = false
 
     var body: some View {
         Group {
@@ -250,20 +252,13 @@ struct GameContainerView: View {
                 GameView(viewModel: viewModel)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .ignoresSafeArea()
         #if os(iOS)
         .navigationBarBackButtonHidden(true)
         #endif
         .onReceive(viewModel.$gameState) { newState in
-            // Only dismiss if the view has already appeared and state changes to menu
-            // This prevents dismissing during initial async state updates
-            if hasAppeared && newState == .menu {
+            if newState == .menu {
                 dismiss()
             }
-        }
-        .onAppear {
-            hasAppeared = true
         }
     }
 }
