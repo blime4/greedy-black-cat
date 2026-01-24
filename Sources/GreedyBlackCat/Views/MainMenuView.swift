@@ -80,7 +80,11 @@ struct MainMenuView: View {
                             let vm = GameViewModel(gameMode: selectedMode)
                             vm.startGame()
                             gameViewModel = vm
-                            showingGame = true
+
+                            // Ensure UI updates are processed before showing the game
+                            DispatchQueue.main.async {
+                                showingGame = true
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "play.circle.fill")

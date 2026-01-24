@@ -86,10 +86,10 @@ class GameViewModel: ObservableObject {
 
     // MARK: - Task Storage
     nonisolated(unsafe) private var activeTasks: Set<Task<Void, Never>> = []
-    private var bossAttackTask: Task<Void, Never>?
-    private var achievementHideTask: Task<Void, Never>?
-    private var toastHideTask: Task<Void, Never>?
-    private var flashHideTask: Task<Void, Never>?
+    nonisolated(unsafe) private var bossAttackTask: Task<Void, Never>?
+    nonisolated(unsafe) private var achievementHideTask: Task<Void, Never>?
+    nonisolated(unsafe) private var toastHideTask: Task<Void, Never>?
+    nonisolated(unsafe) private var flashHideTask: Task<Void, Never>?
 
     // Track which bosses have been defeated to prevent re-triggering
     private var defeatedBossTypes: Set<BossType> = []
@@ -111,18 +111,17 @@ class GameViewModel: ObservableObject {
         let startY = theSettings.gridHeight / 2
         let theCat = Cat(startPosition: Position(x: startX, y: startY))
         let theHighScore = Self.loadHighScore(for: gameMode)
-        let gridW = theSettings.gridWidth
-        let gridH = theSettings.gridHeight
-        let theFood = generateFood(for: theCat, gridWidth: gridW, gridHeight: gridH)
 
-        // Now assign to all properties
+        // Initialize all stored properties first
         self.settings = theSettings
         self.currentSpeed = theSpeed
         self.cat = theCat
         self.highScore = theHighScore
-        self.food = theFood
         self.gameMode = gameMode
         self.timeRemaining = gameMode.timeLimit ?? 0
+
+        // Now we can call instance methods
+        self.food = generateFood(for: theCat, gridWidth: theSettings.gridWidth, gridHeight: theSettings.gridHeight)
     }
 
     // MARK: - Game Control
@@ -286,7 +285,7 @@ class GameViewModel: ObservableObject {
         activeTasks.insert(task)
     }
 
-    private func cancelAllTasks() {
+    nonisolated(unsafe) private func cancelAllTasks() {
         activeTasks.forEach { $0.cancel() }
         activeTasks.removeAll()
         bossAttackTask?.cancel()
@@ -1242,7 +1241,7 @@ class GameViewModel: ObservableObject {
 
         // Calculate performance metrics
         let avgCombo = foodEaten > 0 ? Double(score) / Double(foodEaten) : 0
-        let recentPerformance = comboCount >= 3 // Good performance indicator
+        _ = comboCount >= 3 // Good performance indicator
 
         // Determine new difficulty level based on score and performance
         let newLevel: Int

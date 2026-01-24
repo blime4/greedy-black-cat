@@ -87,14 +87,18 @@ struct GameView: View {
                 // Game Grid
                 gameGridView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .overlay(
+                    .overlay {
                         // Speed lines during dash
-                        SpeedLinesView(
-                            isDashing: viewModel.isDashing,
-                            direction: viewModel.cat.direction,
-                            gridSize: cellSize
-                        )
-                    )
+                        GeometryReader { geometry in
+                            let gridSize = min(geometry.size.width, geometry.size.height)
+                            let cellSize = gridSize / CGFloat(max(viewModel.gridWidth, viewModel.gridHeight))
+                            SpeedLinesView(
+                                isDashing: viewModel.isDashing,
+                                direction: viewModel.cat.direction,
+                                gridSize: cellSize
+                            )
+                        }
+                    }
                     .timeWarpEffect(
                         isActive: viewModel.activePowerUps.contains { $0.type == .slowMotion },
                         intensity: 0.8
@@ -117,6 +121,7 @@ struct GameView: View {
                 }
                 #endif
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // Active Power-ups Indicator
             if !viewModel.activePowerUps.isEmpty {
