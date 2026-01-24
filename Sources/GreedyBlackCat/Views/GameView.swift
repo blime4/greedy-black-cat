@@ -409,16 +409,10 @@ struct GameView: View {
     // MARK: - Game Grid
     private var gameGridView: some View {
         GeometryReader { geometry in
-            // Calculate cell size to fill the entire space
-            // Use the dimension that maintains grid aspect ratio while filling available space
-            let gridAspectRatio = CGFloat(viewModel.gridWidth) / CGFloat(viewModel.gridHeight)
-            let availableAspectRatio = geometry.size.width / geometry.size.height
-
-            // Choose the limiting dimension based on aspect ratios
-            let limitingDimension = availableAspectRatio > gridAspectRatio
-                ? geometry.size.height
-                : geometry.size.width
-            let cellSize = limitingDimension / CGFloat(max(viewModel.gridWidth, viewModel.gridHeight))
+            // Calculate cell size to fill entire screen
+            let cellSizeFromWidth = geometry.size.width / CGFloat(viewModel.gridWidth)
+            let cellSizeFromHeight = geometry.size.height / CGFloat(viewModel.gridHeight)
+            let cellSize = max(cellSizeFromWidth, cellSizeFromHeight)
 
             ZStack {
                 // Grid background with gradient and rhythmic pulse
@@ -433,8 +427,7 @@ struct GameView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: cellSize * CGFloat(viewModel.gridWidth),
-                           height: cellSize * CGFloat(viewModel.gridHeight))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .scaleEffect(1.0 + (viewModel.gamePulse * 0.003))
                     .animation(.easeInOut(duration: 0.1), value: viewModel.gamePulse)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -616,9 +609,7 @@ struct GameView: View {
                     }
                 }
             }
-            .frame(width: cellSize * CGFloat(viewModel.gridWidth),
-                   height: cellSize * CGFloat(viewModel.gridHeight))
-            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
