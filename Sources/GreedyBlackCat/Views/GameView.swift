@@ -253,7 +253,7 @@ struct GameView: View {
         .navigationBarHidden(true)
         #endif
         #if os(macOS)
-        .frame(minWidth: 600, minHeight: 600)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .keyboardControls(viewModel: viewModel)
         #else
         .touchControls(viewModel: viewModel)
@@ -414,8 +414,12 @@ struct GameView: View {
             let cellSizeFromHeight = geometry.size.height / CGFloat(viewModel.gridHeight)
             let cellSize = max(cellSizeFromWidth, cellSizeFromHeight)
 
+            // Grid dimensions
+            let gridWidth = cellSize * CGFloat(viewModel.gridWidth)
+            let gridHeight = cellSize * CGFloat(viewModel.gridHeight)
+
             ZStack {
-                // Grid background with gradient and rhythmic pulse
+                // Grid background with gradient - positioned to fill entire space
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
@@ -427,7 +431,8 @@ struct GameView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .scaleEffect(1.0 + (viewModel.gamePulse * 0.003))
                     .animation(.easeInOut(duration: 0.1), value: viewModel.gamePulse)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
@@ -609,6 +614,7 @@ struct GameView: View {
                     }
                 }
             }
+            .frame(width: gridWidth, height: gridHeight)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }

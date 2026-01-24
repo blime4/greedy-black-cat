@@ -103,7 +103,7 @@ class GameViewModel: ObservableObject {
     var gridHeight: Int { settings.gridHeight }
 
     // MARK: - Initialization
-    init(settings: GameSettings? = nil, gameMode: GameMode = .classic) {
+    init(settings: GameSettings? = nil, gameMode: GameMode = .classic, startImmediately: Bool = false) {
         // Compute all values in local variables first (no self access)
         let theSettings = settings ?? AdaptiveSettings.gameSettings()
         let theSpeed = theSettings.tickInterval / gameMode.speedMultiplier
@@ -122,6 +122,14 @@ class GameViewModel: ObservableObject {
 
         // Now we can call instance methods
         self.food = generateFood(for: theCat, gridWidth: theSettings.gridWidth, gridHeight: theSettings.gridHeight)
+
+        // Start game immediately if requested
+        if startImmediately {
+            gameState = .playing
+            resetGame()
+            startGameLoop()
+            startTimeTimer()
+        }
     }
 
     // MARK: - Game Control

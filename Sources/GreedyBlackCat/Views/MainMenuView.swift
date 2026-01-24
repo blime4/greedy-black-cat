@@ -11,141 +11,140 @@ struct MainMenuView: View {
     @State private var isMenuVisible = false
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                // Background gradient
-                LinearGradient(
-                    colors: [
-                        Color(hex: "FFF8E7"),
-                        Color(hex: "FFE4CC")
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+        ZStack {
+            // Background gradient
+            LinearGradient(
+                colors: [
+                    Color(hex: "FFF8E7"),
+                    Color(hex: "FFE4CC")
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 30) {
-                        Spacer()
-                            .frame(height: 20)
+            ScrollView {
+                VStack(spacing: 30) {
+                    Spacer()
+                        .frame(height: 20)
 
-                        // Title
-                        VStack(spacing: 16) {
-                            Text("🐱")
-                                .font(.system(size: 80))
-                                .offset(y: isCatBouncing ? -10 : 0)
-                                .animation(
-                                    Animation.easeInOut(duration: 1.2)
-                                        .repeatForever(autoreverses: true),
-                                    value: isCatBouncing
-                                )
-                                .onAppear {
-                                    isCatBouncing = true
-                                }
-                            Text("贪吃的黑猫")
-                                .font(.system(size: 48, weight: .bold))
-                                .foregroundColor(Color(hex: "1A1A1A"))
-                            Text("Greedy Black Cat")
-                                .font(.title3)
-                                .foregroundColor(.secondary)
-                        }
-
-                        // Game Mode Selection
-                        VStack(spacing: 16) {
-                            Text("Select Game Mode")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-
-                            LazyVGrid(columns: [
-                                GridItem(.flexible()),
-                                GridItem(.flexible())
-                            ], spacing: 12) {
-                                ForEach(GameMode.allCases, id: \.rawValue) { mode in
-                                    GameModeCard(
-                                        mode: mode,
-                                        isSelected: selectedMode == mode,
-                                        highScore: UserDefaults.standard.integer(
-                                            forKey: "GreedyBlackCatHighScore_\(mode.rawValue)"
-                                        )
-                                    ) {
-                                        selectedMode = mode
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-
-                        // Start Button
-                        Button(action: {
-                            let vm = GameViewModel(gameMode: selectedMode)
-                            vm.startGame()
-                            gameViewModel = vm
-
-                            // Ensure UI updates are processed before showing the game
-                            DispatchQueue.main.async {
-                                showingGame = true
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: "play.circle.fill")
-                                Text("Play \(selectedMode.displayName)")
-                            }
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    colors: [Color.accentColor, Color.accentColor.opacity(0.8)],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
+                    // Title
+                    VStack(spacing: 16) {
+                        Text("🐱")
+                            .font(.system(size: 80))
+                            .offset(y: isCatBouncing ? -10 : 0)
+                            .animation(
+                                Animation.easeInOut(duration: 1.2)
+                                    .repeatForever(autoreverses: true),
+                                value: isCatBouncing
                             )
-                            .cornerRadius(16)
-                            .shadow(color: Color.accentColor.opacity(0.3), radius: 10, x: 0, y: 5)
+                            .onAppear {
+                                isCatBouncing = true
+                            }
+                        Text("贪吃的黑猫")
+                            .font(.system(size: 48, weight: .bold))
+                            .foregroundColor(Color(hex: "1A1A1A"))
+                        Text("Greedy Black Cat")
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: 600)
+
+                    // Game Mode Selection
+                    VStack(spacing: 16) {
+                        Text("Select Game Mode")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+
+                        LazyVGrid(columns: [
+                            GridItem(.flexible()),
+                            GridItem(.flexible())
+                        ], spacing: 12) {
+                            ForEach(GameMode.allCases, id: \.rawValue) { mode in
+                                GameModeCard(
+                                    mode: mode,
+                                    isSelected: selectedMode == mode,
+                                    highScore: UserDefaults.standard.integer(
+                                        forKey: "GreedyBlackCatHighScore_\(mode.rawValue)"
+                                    )
+                                ) {
+                                    selectedMode = mode
+                                }
+                            }
                         }
-                        .buttonStyle(GameButtonStyle(isPrimary: true))
+                    }
+                    .frame(maxWidth: 600)
+                    .padding(.horizontal)
+
+                    // Start Button
+                    Button(action: {
+                        // Create view model with game already started
+                        let vm = GameViewModel(gameMode: selectedMode, startImmediately: true)
+                        gameViewModel = vm
+
+                        // Show the game
+                        showingGame = true
+                    }) {
+                        HStack {
+                            Image(systemName: "play.circle.fill")
+                            Text("Play \(selectedMode.displayName)")
+                        }
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 40)
+                        .padding(.vertical, 16)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.accentColor, Color.accentColor.opacity(0.8)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(16)
+                        .shadow(color: Color.accentColor.opacity(0.3), radius: 10, x: 0, y: 5)
+                    }
+                    .frame(maxWidth: 400)
+                    .buttonStyle(GameButtonStyle(isPrimary: true))
+                    .pressEffect()
+
+                    // Secondary Buttons
+                    HStack(spacing: 30) {
+                        Button("About") {
+                            showingAbout = true
+                        }
+                        .font(.body)
+                        .foregroundColor(.secondary)
                         .pressEffect()
 
-                        // Secondary Buttons
-                        HStack(spacing: 30) {
-                            Button("About") {
-                                showingAbout = true
-                            }
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .pressEffect()
-
-                            Button("🏆 Achievements") {
-                                showingAchievements = true
-                            }
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .pressEffect()
-
-                            #if os(macOS)
-                            Button("Settings") {
-                                showingSettings = true
-                            }
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .pressEffect()
-                            #endif
+                        Button("🏆 Achievements") {
+                            showingAchievements = true
                         }
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .pressEffect()
 
-                        Spacer()
+                        #if os(macOS)
+                        Button("Settings") {
+                            showingSettings = true
+                        }
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .pressEffect()
+                        #endif
                     }
-                    .opacity(isMenuVisible ? 1 : 0)
-                    .offset(y: isMenuVisible ? 0 : 20)
-                    .animation(.easeOut(duration: 0.6).delay(0.2), value: isMenuVisible)
-                    .onAppear {
-                        isMenuVisible = true
-                    }
+                    .frame(maxWidth: 400)
+
+                    Spacer()
+                }
+                .frame(maxWidth: 600)
+                .opacity(isMenuVisible ? 1 : 0)
+                .offset(y: isMenuVisible ? 0 : 20)
+                .animation(.easeOut(duration: 0.6).delay(0.2), value: isMenuVisible)
+                .onAppear {
+                    isMenuVisible = true
                 }
             }
-            #if os(iOS)
-            .navigationBarHidden(true)
-            #endif
+            .frame(maxWidth: .infinity)  // Make ScrollView fill available width
         }
         #if os(iOS)
         .fullScreenCover(isPresented: $showingGame) {
@@ -163,6 +162,9 @@ struct MainMenuView: View {
         .sheet(isPresented: $showingGame) {
             if let viewModel = gameViewModel {
                 GameContainerView(viewModel: viewModel)
+                    .frame(minWidth: 1920, minHeight: 1080)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.clear)
             }
         }
         .sheet(isPresented: $showingAbout) {
@@ -229,36 +231,39 @@ struct GameModeCard: View {
 struct GameContainerView: View {
     @ObservedObject var viewModel: GameViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var hasAppeared = false
 
     var body: some View {
         Group {
-            if !viewModel.gameState.isMenu {
-                if viewModel.gameState.isPlaying || viewModel.gameState.isPaused {
-                    GameView(viewModel: viewModel)
-                } else if viewModel.gameState.isGameOver {
-                    GameOverView(
-                        score: viewModel.score,
-                        highScore: viewModel.highScore,
-                        onRestart: {
-                            viewModel.restartGame()
-                        },
-                        onMainMenu: {
-                            dismiss()
-                        }
-                    )
-                }
+            if viewModel.gameState.isGameOver {
+                GameOverView(
+                    score: viewModel.score,
+                    highScore: viewModel.highScore,
+                    onRestart: {
+                        viewModel.restartGame()
+                    },
+                    onMainMenu: {
+                        dismiss()
+                    }
+                )
             } else {
-                // Fallback loading view if state is still .menu
-                ProgressView("Loading...")
+                GameView(viewModel: viewModel)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
         #if os(iOS)
         .navigationBarBackButtonHidden(true)
         #endif
         .onReceive(viewModel.$gameState) { newState in
-            if newState == .menu {
+            // Only dismiss if the view has already appeared and state changes to menu
+            // This prevents dismissing during initial async state updates
+            if hasAppeared && newState == .menu {
                 dismiss()
             }
+        }
+        .onAppear {
+            hasAppeared = true
         }
     }
 }
